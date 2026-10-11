@@ -36,7 +36,9 @@ Docs only: `START_HERE.md`, `CONTEXT.md`, `ALIGNMENT.md`, `SKILLS.md`,
    author Stefan Kahl (BirdNET team, Cornell), `License: MIT`
    (source code), model weights `CC BY-NC-SA 4.0` per its README.
    Requires `tensorflow>=2.20`, `librosa`, `resampy`, `pandas`,
-   `tqdm`, `kagglehub`. 6,512 species classes per its badge.
+   `tqdm`, `kagglehub`. Upstream badge markets ~6K classes; the shipped
+   V2.4 label file actually contains **6,522** entries (authoritative
+   count, measured 2026-10-11 in the audit — see "Label counts" below).
    This is the "maintained official BirdNET ecosystem package" that
    SKILLS.md Skill 5 prefers.
 3. **Licence note for contest claims:** BirdNET's README states
@@ -66,8 +68,11 @@ Docs only: `START_HERE.md`, `CONTEXT.md`, `ALIGNMENT.md`, `SKILLS.md`,
 ### Risks / blockers (actual, current)
 
 1. **TensorFlow install size/time** on Windows CPU — RESOLVED: install
-   completed (TF 2.21.0), model weights (224 MB SavedModel) downloaded via
-   the analyzer's official mechanism and cached locally.
+   completed (TF 2.21.0), the V2.4 model + label assets (measured 274.5 MB
+   total in `checkpoints/V2.4/`; the TensorFlow SavedModel used for inference
+   is 58.4 MB, TFLite FP32 51.7 MB) downloaded via the analyzer's official
+   mechanism and cached locally. The earlier "224 MB" figure was never
+   measured and is corrected here.
 2. **No personal field test possible for the builder today** — online
    samples are metadata-based smoke tests only (CONTEXT.md §9). Labeled
    exactly that way in manifest, MODEL_CARD.md, and UI ("source claim").
@@ -105,8 +110,9 @@ Docs only: `START_HERE.md`, `CONTEXT.md`, `ALIGNMENT.md`, `SKILLS.md`,
 - `scripts/smoke_test_model.py` uses official `analyze()` (min_conf 0.05,
   top_n 3, CSV). Results observed on this machine:
   - Model + species list load fine: **6,522 species**, 48 kHz, 3.0 s
-    segments (label-count badge said 6,512; observed 6,522 — using the
-    observed number).
+    segments. (Upstream badge/marketing says "6K"/~6,512; the concrete
+    shipped `BirdNET_GLOBAL_6K_V2.4_Labels.txt` has **6,522** non-empty
+    lines. We publish the shipped count everywhere.)
   - Sine tone (execution check): analyzed in ~1.3–2.5 s CPU; on the final
     parse it produced "Buff-spotted Flufftail 0.6407" — a false positive
     on non-bird audio, kept as honest evidence that scores must not be
@@ -126,17 +132,26 @@ Docs only: `START_HERE.md`, `CONTEXT.md`, `ALIGNMENT.md`, `SKILLS.md`,
   up `.org&utm_campaign=…`).
 - Result: **5 samples** in `data/samples/` (gitignored), all CC BY-SA 4.0,
   full provenance + sha256 + audio checks in `data/samples/manifest.json`.
-- Real smoke-test agreement (source labels = uploader claims, NOT ground
-  truth; transcript `data/smoke_run.txt`):
-  - Indian Robin wav → **Indian Robin** 0.55–0.85 ✅
-  - Red-whiskered Bulbul wav → **Red-whiskered Bulbul** 0.20–0.64 ✅
-    (model sci-name *P. jocosus* vs manifest *P. cafer* — shared common
-    name ambiguity, reported)
-  - Asian Koel ogg → **Asian Koel** 0.93/0.97 ✅
-  - Asian Koel XC-mirror mp3 → no reliable bird detection ❌ (honest
-    negative; drives the `no_reliable_detection` path)
-  - Bulbul XC-mirror stereo mp3 → analyzer decode error ❌ (drives
-    backend audio normalisation) → 4/5 usable via raw analyzer.
+- Real smoke-test agreement — two levels, both kept on record:
+  - **Production pipeline (normalised) — authoritative, the path the app
+    runs.** Recorded 2026-10-11 via `scripts/record_sample_outputs.py`; the
+    full verbatim top-3 outputs are committed in `data/model_outputs.json`.
+    **5/5 top-1 agreement** with the uploader's claimed species: Indian Robin
+    0.9994 · Red-whiskered Bulbul 0.6378 · Red-whiskered Bulbul 0.9611 ·
+    Asian Koel 0.9748 · Asian Koel 0.9986. This is *source-label agreement*
+    (uploader claims, NOT ground truth) on five curated clips — a metadata
+    smoke test, not accuracy and not a field test.
+  - **Raw analyzer (pre-normalisation), transcript `data/smoke_run.txt`:**
+    Indian Robin ✅; Red-whiskered Bulbul ✅; Asian Koel ogg ✅; Asian Koel
+    XC-mirror mp3 ❌ no reliable detection; Bulbul XC-mirror stereo mp3 ❌
+    decode error → 3/5 agreement, 4/5 usable. Those two failures are exactly
+    what the backend's audio-normalisation step fixes (covered by an
+    integration test).
+  - Taxonomy correction (P0.1): the manifest had listed the Red-whiskered
+    Bulbul as *Pycnonotus cafer* (= Red-**vented** Bulbul, a different
+    species). Corrected to *Pycnonotus jocosus*, matching the uploader's own
+    source attribution. No model prediction was altered to manufacture a
+    match.
 
 ## Phase 4 — FastAPI inference service (DONE)
 
@@ -273,7 +288,9 @@ Docs only: `START_HERE.md`, `CONTEXT.md`, `ALIGNMENT.md`, `SKILLS.md`,
 - [Phase 1] Frontend scaffolded, all components/hooks/lib written, build
   + preview verified (HTTP 200).
 - [Phase 2] Backend venv created (`backend/.venv`, TF 2.21.0,
-  birdnet-analyzer 2.4.0). Model downloaded for real (224 MB).
+  birdnet-analyzer 2.4.0). V2.4 model + label assets downloaded for real
+  (274.5 MB measured; SavedModel 58.4 MB — the earlier "224 MB" note was
+  unverified and is corrected in the pre-submission audit).
   Smoke test ran real inference. `MODEL_CARD.md` written.
 - [Phase 3] `scripts/download_samples.py` (Wikimedia Commons) → 5
   CC BY-SA 4.0 samples + `manifest.json` with provenance/checksums.

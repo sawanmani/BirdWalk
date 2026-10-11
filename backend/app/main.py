@@ -1,7 +1,8 @@
 """BirdWalk FastAPI service (Phase 4).
 
 Endpoints mirror the locked contract in frontend/src/lib/{types,api}.ts:
-  GET  /api/health      -> {status, model_loaded, model_ready}
+  GET  /api/health      -> {status, package_available, model_assets_available,
+                            model_ready, model_loaded, last_inference_error}
   GET  /api/model-info  -> ModelInfo
   GET  /api/samples     -> {samples: SampleEntry[]}   (from manifest.json)
   POST /api/analyze     -> AnalyzeResponse  (multipart `file` OR ?sample_id=)
@@ -57,7 +58,25 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-_state = {"model_ever_loaded": False}
+_state = {"model_ever_loaded": False, "last_inference_error": None}
+
+
+def _readiness() -> dict:
+    """Lightweight, honest readiness breakdown.
+
+    Distinguishes: package importable, model assets on disk, and whether
+    a real inference has ever succeeded (tracked separately as
+    `model_loaded`). No TensorFlow load or inference happens here.
+    """
+    pkg = birdnet_service.package_available()
+    assets = birdnet_service.model_assets_available()
+    return {
+        "package_available": pkg,
+        "model_assets_available": assets,
+        # `model_ready` now means package AND usable weights, not merely
+        # that `import birdnet_analyzer` succeeds.
+        "model_ready": bool(pkg and assets),
+    }
 
 
 def _load_manifest() -> list[dict]:
@@ -70,10 +89,6 @@ def _load_manifest() -> list[dict]:
         return []
 
 
-def _model_ready() -> bool:
-    return birdnet_service.model_available()
-
-
 def _analyze_path(src: Path, source_label: str | None, is_sample: bool) -> AnalyzeResponse:
     """Shared pipeline: validate -> normalise -> real inference -> schema."""
     meta = inspect_audio(src)
@@ -83,6 +98,7 @@ def _analyze_path(src: Path, source_label: str | None, is_sample: bool) -> Analy
         wav = normalise_to_wav(src, tmpdir)
         rows = birdnet_service.run_inference(wav)
         _state["model_ever_loaded"] = True
+        _state["last_inference_error"] = None
         preds = birdnet_service.aggregate(rows)
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
@@ -123,11 +139,11 @@ def _analyze_path(src: Path, source_label: str | None, is_sample: bool) -> Analy
 
 @app.get("/api/health")
 def health() -> dict:
-    ready = _model_ready()
     return {
         "status": "ok",
+        **_readiness(),
         "model_loaded": _state["model_ever_loaded"],
-        "model_ready": ready,
+        "last_inference_error": _state["last_inference_error"],
     }
 
 
@@ -199,6 +215,7 @@ def analyze(
         except AudioError as e:
             return JSONResponse({"detail": str(e)}, status_code=e.code)
     except birdnet_service.ModelError as e:
+        _state["last_inference_error"] = str(e)
         code = 503 if "not installed" in str(e) else 500
         return JSONResponse({"detail": str(e)}, status_code=code)
     finally:

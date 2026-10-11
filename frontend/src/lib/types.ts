@@ -36,7 +36,9 @@ export interface ModelInfo {
   input_sample_rate: number
   clip_seconds: number
   label_count: number
-  offline_after_download: boolean
+  runs_locally_after_setup: boolean
+  airplane_mode_verified: boolean
+  offline_scope_note: string
 }
 
 export type MissionCategory =
@@ -94,6 +96,7 @@ export interface IndiaSpeciesResponse {
 export type BackendState =
   | 'checking'
   | 'online_model_ready'
-  | 'online_model_missing'
+  | 'online_assets_missing'
+  | 'online_package_missing'
   | 'offline'
   | 'error'

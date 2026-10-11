@@ -28,3 +28,9 @@ NOT grant any rights over:
     data/samples/manifest.json.
 Those components retain their own terms and are not redistributed by this
 repository (model cache and audio files are gitignored).
+
+Because the BirdNET weights are NON-COMMERCIAL (CC BY-NC-SA 4.0), the MIT
+permission to "sell copies" above applies ONLY to BirdWalk's own source
+code — it cannot be exercised over the model. See THIRD_PARTY_NOTICES.md
+for the still-unresolved question of whether contest participation / prize
+money is compatible with the NC clause (no legal conclusion is drawn here).

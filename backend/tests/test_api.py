@@ -9,7 +9,8 @@ import numpy as np
 MODEL_INFO_KEYS = {
     "model_name", "model_version", "model_source", "model_license",
     "code_license", "attribution", "input_sample_rate", "clip_seconds",
-    "label_count", "offline_after_download",
+    "label_count", "runs_locally_after_setup", "airplane_mode_verified",
+    "offline_scope_note",
 }
 ANALYZE_KEYS = {
     "status", "predictions", "audio", "model", "note",
@@ -30,8 +31,36 @@ def test_health_shape(client):
     assert r.status_code == 200
     body = r.json()
     assert body["status"] == "ok"
-    assert isinstance(body["model_ready"], bool)
-    assert isinstance(body["model_loaded"], bool)
+    for k in ("package_available", "model_assets_available",
+              "model_ready", "model_loaded"):
+        assert isinstance(body[k], bool), k
+    # model_ready must be the CONJUNCTION of package + assets, never the
+    # bare import flag alone (P0.2 readiness fix).
+    assert body["model_ready"] == (
+        body["package_available"] and body["model_assets_available"]
+    )
+
+
+def test_health_assets_missing_not_ready(client, monkeypatch):
+    """Importable package but no weights on disk must report model_ready
+    = False — package importability is not proof of a usable model."""
+    from app.services import birdnet_service
+
+    monkeypatch.setattr(birdnet_service, "package_available", lambda: True)
+    monkeypatch.setattr(birdnet_service, "model_assets_available", lambda: False)
+    body = client.get("/api/health").json()
+    assert body["package_available"] is True
+    assert body["model_assets_available"] is False
+    assert body["model_ready"] is False
+
+
+def test_health_package_missing_not_ready(client, monkeypatch):
+    from app.services import birdnet_service
+
+    monkeypatch.setattr(birdnet_service, "package_available", lambda: False)
+    body = client.get("/api/health").json()
+    assert body["package_available"] is False
+    assert body["model_ready"] is False
 
 
 def test_model_info_shape(client):
@@ -43,6 +72,9 @@ def test_model_info_shape(client):
     blob = r.text.lower()
     assert "accuracy" not in blob
     assert "cc by-nc-sa" in blob  # weights licence must be visible
+    # P0.3: an unverified offline claim must never be reported as verified.
+    assert body["airplane_mode_verified"] is False
+    assert "offline_after_download" not in blob
 
 
 def test_samples_endpoint_shape(client):
@@ -160,3 +192,78 @@ def test_analyze_sample_traversal_blocked(client):
         "/api/analyze", params={"sample_id": "../../../Windows/win.ini"}
     )
     assert r.status_code == 404
+
+
+# --- P1.7 deterministic path coverage (no TF, no audio-on-disk needed) ---
+
+
+def _stub_pipeline(monkeypatch, tmp_path, rows):
+    """Drive _analyze_path past validation/normalisation and straight into
+    a stubbed inference result, so status decisions are testable without
+    TensorFlow or real recordings."""
+    from pathlib import Path
+
+    from app import main as main_mod
+
+    monkeypatch.setattr(
+        main_mod, "inspect_audio",
+        lambda p: {"duration_seconds": 5.0, "sample_rate": 48000, "channels": 1},
+    )
+    monkeypatch.setattr(main_mod, "validate_duration", lambda meta, is_sample: None)
+    monkeypatch.setattr(
+        main_mod, "normalise_to_wav", lambda src, td: tmp_path / "n.wav"
+    )
+    monkeypatch.setattr(main_mod.birdnet_service, "run_inference", lambda wav: rows)
+    return main_mod, Path("dummy.wav")
+
+
+def test_no_reliable_detection_low_scores(monkeypatch, tmp_path):
+    """Strongest score below the 0.30 floor => honest 'no_reliable_detection',
+    never a hidden guess presented as 'ok'."""
+    rows = [
+        {"Common name": "Asian Koel", "Scientific name": "Eudynamys scolopaceus",
+         "Confidence": "0.12"},
+    ]
+    main_mod, dummy = _stub_pipeline(monkeypatch, tmp_path, rows)
+    resp = main_mod._analyze_path(dummy, "Asian Koel (source claim)", is_sample=True)
+    assert resp.status == "no_reliable_detection"
+    assert resp.predictions and resp.predictions[0].model_score == 0.12
+    assert "reliability floor" in resp.note.lower()
+
+
+def test_no_reliable_detection_empty(monkeypatch, tmp_path):
+    """No species candidate at all => 'no_reliable_detection' with the
+    'no candidate' explanation, and an empty predictions list."""
+    main_mod, dummy = _stub_pipeline(monkeypatch, tmp_path, [])
+    resp = main_mod._analyze_path(dummy, None, is_sample=False)
+    assert resp.status == "no_reliable_detection"
+    assert resp.predictions == []
+    assert "no species candidate" in resp.note.lower()
+
+
+def test_health_reports_last_inference_error(client, monkeypatch):
+    """A failed inference must surface via health.last_inference_error
+    (P0.2: distinguish 'successful inference' from mere importability)."""
+    from app.services import birdnet_service
+    from app import main as main_mod
+
+    prev = dict(main_mod._state)
+
+    def boom(_path):
+        raise birdnet_service.ModelError(
+            "Inference failed on this audio: TestError"
+        )
+
+    monkeypatch.setattr(birdnet_service, "run_inference", boom)
+    try:
+        main_mod._state["last_inference_error"] = None
+        r = client.post(
+            "/api/analyze",
+            files={"file": ("tone.wav", _wav_bytes(), "audio/wav")},
+        )
+        assert r.status_code == 500  # not the "not installed" 503 branch
+        body = client.get("/api/health").json()
+        assert body["last_inference_error"]
+        assert "Inference failed" in body["last_inference_error"]
+    finally:
+        main_mod._state.update(prev)

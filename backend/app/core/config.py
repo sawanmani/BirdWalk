@@ -41,8 +41,25 @@ MODEL_INFO = {
     ),
     "input_sample_rate": 48000,
     "clip_seconds": 3.0,
-    "label_count": 6522,  # observed at load time on this machine
-    # Honest flag: the app runs inference from the locally cached model,
-    # but a full airplane-mode end-to-end test has NOT been performed yet.
-    "offline_after_download": True,
+    # Authoritative label count: the number of non-empty lines in the
+    # EXACT label file shipped with this install
+    # (birdnet_analyzer.config.BIRDNET_LABELS_FILE, checkpoints/V2.4/
+    # BirdNET_GLOBAL_6K_V2.4_Labels.txt), verified on 2026-10-11. Note the
+    # upstream README badge markets "~6,500 / 6K" classes; the concrete V2.4
+    # label list distributed in the wheel has 6,522 entries. We publish the
+    # measured number, not the badge figure.
+    "label_count": 6522,
+    # Offline honesty: these are separate claims and are NOT conflated.
+    # `runs_locally_after_setup` is a design/code fact (the analysis path
+    # loads the cached local model and issues no per-request network call).
+    # `airplane_mode_verified` is False because a full disconnected-OS test
+    # has NOT been run on this build. Never present the second as done.
+    "runs_locally_after_setup": True,
+    "airplane_mode_verified": False,
+    "offline_scope_note": (
+        "After the one-time model download, analysis runs against the local "
+        "model and makes no per-request network calls. A full airplane-mode "
+        "(disconnected) end-to-end test has NOT been performed, and "
+        "phone-native inference is NOT claimed."
+    ),
 }

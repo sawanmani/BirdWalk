@@ -33,12 +33,50 @@ class ModelError(Exception):
     """Model/package unavailable or inference failed."""
 
 
-def model_available() -> bool:
+def package_available() -> bool:
+    """True if the BirdNET-Analyzer package can be IMPORTED.
+
+    This is deliberately weak: importability proves the code is installed,
+    NOT that the model weights/labels are present or usable. Never present
+    it on its own as model readiness.
+    """
     try:
         import birdnet_analyzer  # noqa: F401
     except Exception:  # noqa: BLE001
         return False
     return True
+
+
+def model_assets_available() -> bool:
+    """True if the model weights and label list are actually on disk.
+
+    Checks the paths the official package resolves for this install: the
+    species label file plus the TensorFlow SavedModel directory (or the
+    TFLite fallback). This is a lightweight filesystem check — it does not
+    load TensorFlow or run inference.
+    """
+    try:
+        from birdnet_analyzer import config as bn
+    except Exception:  # noqa: BLE001
+        return False
+    labels = getattr(bn, "BIRDNET_LABELS_FILE", None)
+    if not labels or not Path(str(labels)).is_file():
+        return False
+    saved_model_dir = getattr(bn, "PB_MODEL", None)
+    tflite = getattr(bn, "BIRDNET_MODEL_PATH", None)
+    sm_ok = bool(saved_model_dir) and (
+        Path(str(saved_model_dir), "saved_model.pb").is_file()
+    )
+    tfl_ok = bool(tflite) and Path(str(tflite)).is_file()
+    return sm_ok or tfl_ok
+
+
+def model_available() -> bool:
+    """Overall readiness to run inference: package importable AND assets on
+    disk. The old version of this function returned True on a bare
+    ``import`` alone, which wrongly implied a usable model — fixed.
+    """
+    return package_available() and model_assets_available()
 
 
 def run_inference(wav_path: Path) -> list[dict]:

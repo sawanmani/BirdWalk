@@ -17,7 +17,15 @@ export function useBackendStatus(): {
     fetchHealth()
       .then((h) => {
         if (cancelled) return
-        setState(h.model_ready ? 'online_model_ready' : 'online_model_missing')
+        if (h.model_ready) {
+          setState('online_model_ready')
+        } else if (h.package_available) {
+          // Analyzer installed but weights/labels not on disk yet.
+          setState('online_assets_missing')
+        } else {
+          // Backend up but the BirdNET-Analyzer package itself is missing.
+          setState('online_package_missing')
+        }
       })
       .catch(() => {
         if (!cancelled) setState('offline')

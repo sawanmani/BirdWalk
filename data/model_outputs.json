@@ -1,0 +1,183 @@
+{
+  "generated_at": "2026-10-11T09:07:59.384550+00:00",
+  "pipeline": "backend.app.main._analyze_path (validate -> normalise -> official BirdNET analyze() -> per-species max aggregation)",
+  "model": "BirdNET GLOBAL 6K V2.4",
+  "honesty": {
+    "what_this_is": "Real top-k model outputs on 5 curated, licence-filtered clips. A small metadata-based SMOKE TEST of the pipeline.",
+    "what_this_is_not": "NOT a field test, NOT a model-accuracy benchmark, and NOT a claim of general recogniser performance.",
+    "source_labels": "Uploader labels on Wikimedia Commons are unverified source claims, not ground truth.",
+    "agreement_vs_accuracy": "'source_label_agreement' = the top prediction shares the uploader's claimed common name. That is label AGREEMENT, not independently verified ACCURACY."
+  },
+  "summary": {
+    "clips": 5,
+    "source_label_agreements": 5,
+    "analysis_errors": []
+  },
+  "results": [
+    {
+      "sample_id": "WC_Indian_robin_call_and_song_recorded_in_February_2022_at_Hari.wav",
+      "file": "WC_Indian_robin_call_and_song_recorded_in_February_2022_at_Hari.wav",
+      "source_label_claim": "Indian Robin (source claim)",
+      "source_label_independently_verified": false,
+      "creator": "Sharadapte",
+      "license": "CC BY-SA 4.0",
+      "checksum_sha256": "b9da5b15e8437850e7a2bffd20086c17250fdbd7b9c8fe22ebbfdb1407c37487",
+      "duration_seconds": 16.867,
+      "status": "ok",
+      "audio_duration_seconds": 16.867,
+      "predictions": [
+        {
+          "rank": 1,
+          "species_common_name": "Indian Robin",
+          "species_scientific_name": "Copsychus fulicatus",
+          "model_score": 0.9994
+        },
+        {
+          "rank": 2,
+          "species_common_name": "Olive-backed Sunbird",
+          "species_scientific_name": "Cinnyris jugularis",
+          "model_score": 0.1532
+        },
+        {
+          "rank": 3,
+          "species_common_name": "Pied Bushchat",
+          "species_scientific_name": "Saxicola caprata",
+          "model_score": 0.0223
+        }
+      ],
+      "source_label_agreement": true
+    },
+    {
+      "sample_id": "WC_Red_whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti_.wav",
+      "file": "WC_Red_whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti_.wav",
+      "source_label_claim": "Red-whiskered Bulbul (source claim)",
+      "source_label_independently_verified": false,
+      "creator": "Sharadapte",
+      "license": "CC BY-SA 4.0",
+      "checksum_sha256": "d990a21e4aa60038154109a75ce88d77fef98717e78db4942274f8e50e09dade",
+      "duration_seconds": 12.873,
+      "status": "ok",
+      "audio_duration_seconds": 12.873,
+      "predictions": [
+        {
+          "rank": 1,
+          "species_common_name": "Red-whiskered Bulbul",
+          "species_scientific_name": "Pycnonotus jocosus",
+          "model_score": 0.6378
+        },
+        {
+          "rank": 2,
+          "species_common_name": "Light-vented Bulbul",
+          "species_scientific_name": "Pycnonotus sinensis",
+          "model_score": 0.5853
+        },
+        {
+          "rank": 3,
+          "species_common_name": "Himalayan Bulbul",
+          "species_scientific_name": "Pycnonotus leucogenys",
+          "model_score": 0.1384
+        }
+      ],
+      "source_label_agreement": true
+    },
+    {
+      "sample_id": "WC_Pycnonotus_jocosus_Red_whiskered_Bulbul_XC538779_mp3.mp3",
+      "file": "WC_Pycnonotus_jocosus_Red_whiskered_Bulbul_XC538779_mp3.mp3",
+      "source_label_claim": "Red-whiskered Bulbul (source claim)",
+      "source_label_independently_verified": false,
+      "creator": "Subhashish Panigrahi",
+      "license": "CC BY-SA 4.0",
+      "checksum_sha256": "423001f3454889cdd380b7c4add206aea20dde459acae847a1b78b5030e54471",
+      "duration_seconds": 129.026,
+      "status": "ok",
+      "audio_duration_seconds": 129.026,
+      "predictions": [
+        {
+          "rank": 1,
+          "species_common_name": "Red-whiskered Bulbul",
+          "species_scientific_name": "Pycnonotus jocosus",
+          "model_score": 0.9611
+        },
+        {
+          "rank": 2,
+          "species_common_name": "Gray-headed Bulbul",
+          "species_scientific_name": "Brachypodius priocephalus",
+          "model_score": 0.7281
+        },
+        {
+          "rank": 3,
+          "species_common_name": "Yellow-bellied Bulbul",
+          "species_scientific_name": "Alophoixus phaeocephalus",
+          "model_score": 0.2113
+        }
+      ],
+      "source_label_agreement": true
+    },
+    {
+      "sample_id": "WC_Asian_Koel_ogg.ogg",
+      "file": "WC_Asian_Koel_ogg.ogg",
+      "source_label_claim": "Asian Koel (source claim)",
+      "source_label_independently_verified": false,
+      "creator": "Philip Eapen",
+      "license": "CC BY-SA 4.0",
+      "checksum_sha256": "e88e306b778d3cb688aab0630e4e738e36dba6d80399a7632df78ac4967d85f7",
+      "duration_seconds": 6.807,
+      "status": "ok",
+      "audio_duration_seconds": 6.807,
+      "predictions": [
+        {
+          "rank": 1,
+          "species_common_name": "Asian Koel",
+          "species_scientific_name": "Eudynamys scolopaceus",
+          "model_score": 0.9748
+        },
+        {
+          "rank": 2,
+          "species_common_name": "Pacific Koel",
+          "species_scientific_name": "Eudynamys orientalis",
+          "model_score": 0.4207
+        },
+        {
+          "rank": 3,
+          "species_common_name": "Helmeted Friarbird",
+          "species_scientific_name": "Philemon buceroides",
+          "model_score": 0.183
+        }
+      ],
+      "source_label_agreement": true
+    },
+    {
+      "sample_id": "WC_Eudynamys_scolopaceus_Asian_Koel_XC476378_mp3.mp3",
+      "file": "WC_Eudynamys_scolopaceus_Asian_Koel_XC476378_mp3.mp3",
+      "source_label_claim": "Asian Koel (source claim)",
+      "source_label_independently_verified": false,
+      "creator": "Manoj Karingamadathil",
+      "license": "CC BY-SA 4.0",
+      "checksum_sha256": "59197c7697b5591e2c0f501c3464be9a9929c2f41afa9d5d9d4c31c0d0e824f3",
+      "duration_seconds": 113.85,
+      "status": "ok",
+      "audio_duration_seconds": 113.85,
+      "predictions": [
+        {
+          "rank": 1,
+          "species_common_name": "Asian Koel",
+          "species_scientific_name": "Eudynamys scolopaceus",
+          "model_score": 0.9986
+        },
+        {
+          "rank": 2,
+          "species_common_name": "Greater Coucal",
+          "species_scientific_name": "Centropus sinensis",
+          "model_score": 0.8577
+        },
+        {
+          "rank": 3,
+          "species_common_name": "Purple-rumped Sunbird",
+          "species_scientific_name": "Leptocoma zeylonica",
+          "model_score": 0.8555
+        }
+      ],
+      "source_label_agreement": true
+    }
+  ]
+}

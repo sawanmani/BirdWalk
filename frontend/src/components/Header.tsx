@@ -5,7 +5,8 @@ import { cn } from '../lib/cn.ts'
 const STATE_LABEL: Record<BackendState, string> = {
   checking: 'Checking local service…',
   online_model_ready: 'Local model ready',
-  online_model_missing: 'Service up — model not downloaded yet',
+  online_assets_missing: 'Service up — model weights not downloaded',
+  online_package_missing: 'Service up — BirdNET not installed',
   offline: 'Local service unreachable',
   error: 'Local service error',
 }
@@ -41,7 +42,9 @@ export function Header({
               className={cn(
                 'size-2 rounded-full',
                 backendState === 'online_model_ready' && 'bg-pine',
-                backendState === 'online_model_missing' && 'bg-sunlit',
+                (backendState === 'online_assets_missing' ||
+                  backendState === 'online_package_missing') &&
+                  'bg-sunlit',
                 (backendState === 'offline' || backendState === 'error') &&
                   'bg-danger',
                 backendState === 'checking' && 'bg-moss animate-pulse',

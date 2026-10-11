@@ -9,14 +9,22 @@ memory. Versions are the ones actually used for the verified test runs.
 
 ### BirdNET — model weights: **CC BY-NC-SA 4.0** (non-commercial!)
 
-- Model: BirdNET GLOBAL 6K V2.4 (224 MB SavedModel, 6,522 labels
-  observed on this install).
+- Model: BirdNET GLOBAL 6K V2.4 (V2.4 model + label assets, measured
+  274.5 MB on this install — the TensorFlow SavedModel used for inference
+  is 58.4 MB; 6,522 labels observed).
 - © K. Lisa Yang Center for Conservation Bioacoustics, Cornell Lab of
   Ornithology & Chemnitz University of Technology.
 - The weights are licensed for **non-commercial** use with attribution
-  and ShareAlike. BirdWalk is a non-commercial educational Hacktoberfest
-  demo, which fits — but anyone reusing this project commercially MUST
-  remove the model or obtain a commercial licence from the BirdNET team.
+  and ShareAlike. BirdWalk is presented as a non-commercial educational
+  Hacktoberfest demo. **Open licence question — not resolved here:**
+  Hacktoberfest participation can involve prizes/giveaways, and CC BY-NC-SA
+  "non-commercial" is a nuanced, judgement-based term. We make **no legal
+  conclusion** that contest participation is automatically compatible with
+  the NC clause. Anyone reusing or distributing this project — especially
+  commercially or in any context involving monetary prize — MUST verify the
+  BirdNET model licence themselves or obtain a commercial licence from the
+  BirdNET team. This repository's own MIT licence (BirdWalk code only) does
+  **not** relicense the CC BY-NC-SA model weights.
 - Attribution is surfaced in-app (Footer + About panel), in
   `MODEL_CARD.md`, and in `README.md` ("Powered by BirdNET").
 - More: `https://birdnet.cornell.edu/` · licence:

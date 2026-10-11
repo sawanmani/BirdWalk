@@ -20,6 +20,22 @@ experience: one audio clue → one tiny mission → phone back away.
 
 ## How it works
 
+```mermaid
+flowchart TD
+    U(["On a walk — phone in hand"]) --> UI["React + TS + Tailwind UI"]
+    UI -->|record / upload / pick sample| A["Audio: mono 48 kHz WAV"]
+    A -->|HTTP, localhost only| API["FastAPI backend"]
+    API --> NORM["Validate + decode + normalise<br/>temp files deleted in finally"]
+    NORM --> BN["BirdNET-Analyzer analyze()<br/>GLOBAL 6K V2.4 · 6,522 labels<br/>real TensorFlow, CPU"]
+    BN --> AGG["Per-species max -> top 3<br/>'model score', never accuracy"]
+    AGG --> RES["Results + uncertainty honesty"]
+    RES --> MISS["Deterministic mission<br/>sha256-keyed templates, no LLM"]
+    MISS --> AWAY["Phone-away quiet timer"]
+    AWAY --> JOURNAL[("Local journal<br/>localStorage, deletable")]
+```
+
+Plain-text view of the same pipeline:
+
 ```
 Browser (Vite + React + TS + Tailwind v4)
    ├─ record (MediaRecorder → converted to mono 48 kHz WAV in-page)
@@ -42,6 +58,16 @@ Results view → "model score" (never called accuracy) → mission →
 phone-away quiet timer → local journal (localStorage, deletable)
 ```
 
+### Screenshots
+
+> _Pending — to be captured from a live local run and committed. No
+> screenshots are shown here until they are real; nothing below is a
+> mockup passed off as the running app._
+
+| Landing & readiness | Sample → results (model score) | Mission & phone-away |
+|---|---|---|
+| _pending_ | _pending_ | _pending_ |
+
 No audio is sent to any third-party service. No account, no database,
 no GPS. The backend binds to `127.0.0.1` and CORS allows localhost dev
 origins only; API docs endpoints are disabled.
@@ -52,7 +78,7 @@ Requirements: **Python ≥3.11** (built/tested on 3.12.3), **Node ≥20**
 (tested on v26.2.0), ~1 GB free for the model's first download.
 
 ```bash
-# 1. Backend (first run downloads the 224 MB BirdNET model, once)
+# 1. Backend (first use downloads the ~275 MB BirdNET model + base labels, once)
 cd backend
 python -m venv .venv
 .venv\Scripts\activate            # Windows  (source .venv/bin/activate on POSIX)
@@ -71,9 +97,16 @@ python scripts\download_samples.py
 Tests:
 
 ```bash
-backend\.venv\Scripts\python.exe -m pytest -q          # 26 unit tests
+backend\.venv\Scripts\python.exe -m pytest -q          # 36 unit tests
 backend\.venv\Scripts\python.exe -m pytest -q -m integration   # 3 real-inference tests
 cd frontend && npm run build                           # tsc + vite
+```
+
+Regenerate the recorded real top-k outputs for the bundled samples
+(writes the committed `data/model_outputs.json` evidence artifact):
+
+```bash
+backend\.venv\Scripts\python.exe scripts\record_sample_outputs.py
 ```
 
 Rebuild the India shortlist from the model's own labels:
@@ -106,8 +139,11 @@ backend\.venv\Scripts\python.exe scripts\build_india_species_list.py
   machine**: the analysis path makes no outbound network calls (model
   is served from the local cache) and temp audio is deleted in a
   `finally` block — verified by test runs with 0 leftover temp dirs.
+  This is reported by `/api/model-info` as `runs_locally_after_setup: true`.
 - A full disconnected-OS (airplane-mode) run has **not** been tested;
-  the claim above is scoped to code paths and local-only binding.
+  `/api/model-info` reports `airplane_mode_verified: false` and the claim
+  above is scoped to code paths and local-only binding — not a verified
+  airplane-mode result.
 - Phone-native (browser-on-phone) inference is **not** claimed — the
   model runs on the backend host.
 
@@ -120,9 +156,13 @@ backend\.venv\Scripts\python.exe scripts\build_india_species_list.py
   positive — evidence that scores must not be over-trusted
   (`MODEL_CARD.md` keeps that record).
 - **Sample clips are metadata smoke tests, not field validation.** The
-  species labels come from the uploaders ("source claims"), were not
-  independently verified, and 3/5 matched the model's output. No
-  personal field test was conducted by the builder.
+  species labels come from the uploaders ("source claims") and were not
+  independently verified. On the **production (normalised) pipeline all
+  5 clips' top-1 prediction agreed with the uploader's label** — that is
+  *label agreement*, **not** accuracy (verbatim top-3 in
+  `data/model_outputs.json`; the raw pre-normalisation analyzer matched
+  only 3/5, see `MODEL_CARD.md` §4). No personal field test was
+  conducted by the builder, and no general model accuracy is claimed.
 - **Microphone recording is implemented but NOT TESTED end-to-end on a
   physical device** in this build environment (automation can't grant
   a mic). Recordings are converted to WAV in-page because backends
@@ -130,9 +170,13 @@ backend\.venv\Scripts\python.exe scripts\build_india_species_list.py
   flow is not.
 - **Gemma/Ollama generation is omitted, not faked** — no running local
   LLM was available, so missions use deterministic templates only.
-- **BirdNET weights are CC BY-NC-SA 4.0 (non-commercial).** This
-  project is a non-commercial educational demo; no deployment or
-  commercial claim is made.
+- **BirdNET weights are CC BY-NC-SA 4.0 (non-commercial).** BirdWalk's
+  own code is MIT; the model and sample audio keep their own terms. The
+  app is not monetised and no weights/audio are redistributed here.
+  **Open question, no legal conclusion drawn:** whether Hacktoberfest
+  participation or prize money is a "non-commercial" use is not resolved
+  in this repo — see `THIRD_PARTY_NOTICES.md`. Commercial reuse requires
+  removing the model or licensing it from the BirdNET team.
 - Not deployed anywhere; this is a local demo. Not tested on mobile
   browsers beyond viewport-styled CSS and 360 px layout checks.
 
@@ -155,12 +199,26 @@ backend\.venv\Scripts\python.exe scripts\build_india_species_list.py
 |---|---|
 | `frontend/` | Vite + React 19 + TS + Tailwind v4 app |
 | `backend/` | FastAPI service + `tests/` (pytest) |
-| `scripts/` | sample downloader, model smoke test, India list builder, negative-path probe |
+| `scripts/` | sample downloader, model smoke test, real top-k recorder (`record_sample_outputs.py`), India list builder, negative-path probe |
 | `data/samples/` | manifest + README (audio gitignored) |
+| `data/model_outputs.json` | committed record of real top-3 model outputs on the 5 samples (evidence) |
 | `MODEL_CARD.md` | model facts, licences, observed outputs |
 | `TEST_REPORT.md` | measured test evidence + NOT TESTED list |
 | `IMPLEMENTATION_STATUS.md` | phase-by-phase build log |
 | `THIRD_PARTY_NOTICES.md` | dependency attributions |
 | `CONTEXT.md` / `ALIGNMENT.md` / `SKILLS.md` / `BUILD_PROMPTS.md` | challenge brief & build plan |
+
+## GitHub metadata (suggestions for the repo settings)
+
+- **Description:** "BirdWalk — identify a bird from audio with a local
+  BirdNET model, then get a screen-free phone-away mission. React +
+  FastAPI + BirdNET, Hacktoberfest 2026."
+- **Topics:** `hacktoberfest`, `birdnet`, `bird-song`, `audio-classification`,
+  `fastapi`, `react`, `vite`, `tailwindcss`, `local-inference`, `touch-grass`,
+  `conservation-bioacoustics`.
+- **Website / live demo:** none — this is a local demo; do **not** add a
+  live URL until one is actually deployed.
+- **Social preview:** a real screenshot once the pending screenshots above
+  are captured (no mockups).
 
 Made for **Hacktoberfest 2026 — "Touch Grass"**. Go outside. 🌳

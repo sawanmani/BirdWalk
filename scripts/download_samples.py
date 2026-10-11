@@ -52,9 +52,17 @@ UA = {
 }
 
 # (display label, scientific name, Commons search query)
+# NOTE on the bulbul: Red-whiskered Bulbul is Pycnonotus jocosus, a
+# DIFFERENT species from Red-vented Bulbul (Pycnonotus cafer). Both share
+# the loose common name "red-whiskered/red-vented bulbul" in some field
+# notes, which caused an earlier mislabel. Every recording below was
+# uploaded to Commons under the title/attribute "Red-whiskered Bulbul /
+# Pycnonotus jocosus", so we record the scientific name the UPLOADER
+# claimed (jocosus). It is still an unverified source claim, not ground
+# truth — see `label_independently_verified: False` on every entry.
 TARGETS = [
     ("Indian Robin", "Copsychus fulicatus", '"Indian robin" call filetype:audio'),
-    ("Red-whiskered Bulbul", "Pycnonotus cafer", '"Red-whiskered bulbul" call filetype:audio'),
+    ("Red-whiskered Bulbul", "Pycnonotus jocosus", '"Red-whiskered bulbul" call filetype:audio'),
     ("Asian Koel", "Eudynamys scolopaceus", '"Asian koel" call filetype:audio'),
 ]
 

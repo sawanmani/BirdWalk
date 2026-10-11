@@ -77,6 +77,14 @@ export function AboutPanel({
             k="Species classes"
             v={model ? String(model.label_count) : '—'}
           />
+          <Field
+            k="Runs locally after setup"
+            v={model ? String(model.runs_locally_after_setup) : '—'}
+          />
+          <Field
+            k="Airplane-mode tested"
+            v={model ? (model.airplane_mode_verified ? 'Yes' : 'Not yet tested') : '—'}
+          />
         </dl>
         <p className="mt-4 text-xs leading-relaxed text-muted">
           {model?.attribution ??
@@ -86,10 +94,12 @@ export function AboutPanel({
           score is not accuracy and the class count is not accuracy.
         </p>
         <p className="mt-3 text-xs text-muted">
-          "Offline" here is scoped: after the model and app assets are
-          downloaded, inference and the mission flow run on this machine.
-          Downloading the model or samples, and any deployment, do
-          require internet. Phone-native inference is not claimed.
+          {model?.offline_scope_note ??
+            `"Offline" here is scoped: after the model and app assets are
+            downloaded, inference and the mission flow run on this machine
+            with no per-request network calls. A full airplane-mode
+            (disconnected) end-to-end test has NOT been performed, and
+            phone-native inference is not claimed.`}
         </p>
       </div>
 

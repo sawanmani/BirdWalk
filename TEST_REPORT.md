@@ -1,8 +1,13 @@
-# BirdWalk — Test Report (Phase 9)
+# BirdWalk — Test Report
 
-All results below were actually executed and observed on this machine
-during implementation. Anything not verified here is listed under
-"NOT TESTED" — nothing is claimed beyond the evidence.
+All results below were actually executed and observed on this machine.
+Anything not verified here is listed under "NOT TESTED" — nothing is
+claimed beyond the evidence.
+
+> Re-run in full during the **pre-submission audit on 2026-10-11**; the
+> counts, timings and model-asset figures below are from that run. New
+> audit coverage (readiness split, offline honesty, real top-k artifact,
+> metadata-consistency and `no_reliable_detection` path tests) is included.
 
 ## 1. Environment (measured)
 
@@ -13,7 +18,7 @@ during implementation. Anything not verified here is listed under
 | TensorFlow | 2.21.0 (CPU, oneDNN on) |
 | FastAPI / starlette TestClient | fastapi 0.143.0 |
 | BirdNET-Analyzer | pip `birdnet-analyzer==2.4.0` (package `__version__` prints `2.3.0` — known quirk, see MODEL_CARD.md) |
-| Model | BirdNET GLOBAL 6K V2.4, 224 MB SavedModel cached locally, 6,522 labels (observed) |
+| Model | BirdNET GLOBAL 6K V2.4. V2.4 model + label assets measured at **274.5 MB** in `checkpoints/V2.4/` (TF SavedModel used for inference 58.4 MB, TFLite FP32 51.7 MB), downloaded on first use; **6,522** labels (counted from the shipped label file). The old "224 MB SavedModel" figure was never measured and is corrected. |
 | Node / npm | v26.2.0 / 11.13.0 |
 
 ## 2. Automated test suites
@@ -24,18 +29,29 @@ Command:
 ```
 backend\.venv\Scripts\python.exe -m pytest -q
 ```
-Result (final run after all fixes):
+Result (final run, 2026-10-11):
 ```
-26 passed, 3 deselected, 1 warning in 1.09s
+36 passed, 3 deselected, 1 warning in 0.49s
 ```
 Coverage: API contract shapes (`/api/health`, `/api/model-info`,
-`/api/samples`, `/api/india-species`), validation paths (400 missing
-input, 415 wrong extension, 413 oversize file + over-duration, 422
-corrupt audio + silent audio, 404 unknown/deleted sample + sample-id
-path-traversal blocked), 503 when the model errors (monkeypatched),
-mission determinism + safety wording + universal-mission fallback,
-`aggregate()` max/rank/cap and `"None"`-row filtering, and the truth
-rule that **no response field name** contains "accuracy"/"probability".
+`/api/samples`, `/api/analyze`, `/api/india-species`), validation paths
+(400 missing input, 415 wrong extension, 413 oversize file +
+over-duration, 422 corrupt audio + silent audio, 404 unknown/deleted
+sample + sample-id path-traversal blocked), 503 when the model errors
+(monkeypatched), **readiness honesty** (`model_ready` is the conjunction
+of `package_available` AND `model_assets_available`; assets-missing and
+package-missing each force `model_ready=False`; a failed inference is
+surfaced via `health.last_inference_error`), **offline honesty**
+(`airplane_mode_verified is False`, the conflated `offline_after_download`
+flag is gone), the honest **`no_reliable_detection`** status for
+below-floor and empty results (deterministic, no TF), mission
+determinism + safety wording + universal-mission fallback, `aggregate()`
+max/rank/cap and `"None"`-row filtering, **metadata consistency**
+(`data/model_outputs.json` agreement count + checksums match the
+manifest; Red-whiskered Bulbul is `Pycnonotus jocosus`, never `cafer`;
+uploader labels flagged unverified; authoritative label count 6,522),
+and the truth rule that **no response field name** contains
+"accuracy"/"probability".
 
 ### Backend — pytest (integration, real BirdNET inference)
 
@@ -43,9 +59,9 @@ Command:
 ```
 backend\.venv\Scripts\python.exe -m pytest -q -m integration
 ```
-Result:
+Result (2026-10-11):
 ```
-3 passed, 26 deselected, 2 warnings in 18.11s
+3 passed, 36 deselected, 2 warnings in 12.17s
 ```
 1. `sample_id` analysis of the Asian Koel Ogg — real inference through
    the whole pipeline; rank 1 prediction returned; recursive field-name
@@ -62,12 +78,34 @@ Command:
 ```
 cd frontend && npm run build
 ```
-Result (final run, after the last accessibility fix):
+Result (final run, 2026-10-11):
 ```
-✓ built in 2.16s
+✓ 2337 modules transformed.
+✓ built in 1.30s
 ```
-`tsc -b` clean; Vite build produced `dist/` with self-hosted font
-assets (no CDN runtime dependency for fonts).
+`tsc -b` clean (the split `online_assets_missing` / `online_package_missing`
+readiness states and the three offline fields type-check across
+`types.ts`/`api.ts`/`useBackendStatus.ts`/`Header.tsx`/`App.tsx`/`AboutPanel.tsx`);
+Vite build produced `dist/` with self-hosted font assets (no CDN runtime
+dependency for fonts).
+
+### Sample outputs — real top-k artifact
+
+Command:
+```
+backend\.venv\Scripts\python.exe scripts\record_sample_outputs.py
+```
+Runs the **production** pipeline (`_analyze_path`: validate → normalise →
+official `analyze()` → per-species max) on all 5 bundled clips and writes
+the verbatim top-3 predictions + scores to `data/model_outputs.json`
+(committed). Result (2026-10-11):
+```
+Clips=5 agreements=5 errors=0
+```
+Top-1 (model_score): Indian Robin 0.9994 · Red-whiskered Bulbul 0.6378 ·
+Red-whiskered Bulbul 0.9611 · Asian Koel 0.9748 · Asian Koel 0.9986. This
+is **source-label agreement on 5 curated clips (a smoke test), not
+accuracy** — see section 6.
 
 ## 3. Live-server HTTP evidence (uvicorn on 127.0.0.1:8000)
 
@@ -153,12 +191,24 @@ Round 3 — Phase 8 UI + responsiveness + a11y:
 
 ## 6. Source-label agreement (explicitly NOT accuracy)
 
-From `data/smoke_run.txt` (raw analyzer, Phase 3) and pipeline runs:
-3 of 5 samples matched their source label (Indian Robin, Red-whiskered
-Bulbul — with a *P. jocosus* vs *P. cafer* common-name conflict
-reported; Asian Koel). Labels are uploaders' own claims, not ground
-truth. This is a metadata smoke test of the pipeline only. **No
-personal field test was conducted.**
+Two levels, kept separate (full numbers in `data/model_outputs.json` and
+MODEL_CARD.md §4):
+
+- **Production pipeline (normalised)** — the path the app actually runs:
+  **5 of 5** clips' top-1 prediction agreed with the uploader's claimed
+  common name (Indian Robin 0.9994; Red-whiskered Bulbul 0.6378 and
+  0.9611; Asian Koel 0.9748 and 0.9986).
+- **Raw analyzer (pre-normalisation, Phase 3)** — 3 of 5 agreed; the
+  un-normalised 113 s stereo/long files produced one honest
+  `no_reliable_detection` and one decode failure, which is exactly why
+  the backend normalises audio before inference.
+
+In every case the species labels are **uploaders' own claims**, not ground
+truth (`label_independently_verified: false`). "Agreement" means the model
+agreed with the uploader's label — it is **not** an accuracy measurement.
+Five curated clips are a **metadata-based smoke test of the pipeline only**.
+**No personal field test was conducted**, and no general model accuracy is
+claimed.
 
 ## 7. NOT TESTED (recorded honestly, not claimed)
 

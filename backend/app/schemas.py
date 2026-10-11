@@ -38,7 +38,9 @@ class ModelInfo(BaseModel):
     input_sample_rate: int
     clip_seconds: float
     label_count: int
-    offline_after_download: bool
+    runs_locally_after_setup: bool
+    airplane_mode_verified: bool
+    offline_scope_note: str
 
 
 class AnalyzeResponse(BaseModel):

@@ -180,14 +180,17 @@ export default function App() {
       />
 
       <main className="flex-1">
-        {(backendState === 'online_model_missing' ||
+        {(backendState === 'online_assets_missing' ||
+          backendState === 'online_package_missing' ||
           backendState === 'offline') &&
           step !== 'phone_away' && (
             <div className="mx-auto mt-4 w-full max-w-xl px-4 sm:px-6">
               <StatusBanner tone="warn" dismissible onDismiss={recheck}>
                 {backendState === 'offline'
                   ? 'The local backend is unreachable. Start it with uvicorn (see README), then dismiss to recheck.'
-                  : 'Backend is up but the BirdNET model is not downloaded/loaded yet. Analysis will honestly report "model not ready" until it is.'}
+                  : backendState === 'online_package_missing'
+                    ? 'The backend is running but the BirdNET-Analyzer package is not installed there. Run pip install -r backend/requirements.txt, then dismiss to recheck.'
+                    : 'Backend is up and the BirdNET package is installed, but the model weights/labels are not on disk yet. Analysis will honestly report "model not ready" until they are.'}
               </StatusBanner>
             </div>
           )}

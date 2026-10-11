@@ -45,8 +45,11 @@ export class ApiError extends Error {
 
 export interface HealthResult {
   status: string
-  model_loaded: boolean
+  package_available?: boolean
+  model_assets_available?: boolean
   model_ready: boolean
+  model_loaded: boolean
+  last_inference_error?: string | null
 }
 
 export const fetchHealth = () =>

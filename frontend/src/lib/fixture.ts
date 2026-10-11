@@ -20,7 +20,9 @@ const FIXTURE_MODEL: AnalyzeResponse['model'] = {
   input_sample_rate: 32000,
   clip_seconds: 3,
   label_count: 0,
-  offline_after_download: false,
+  runs_locally_after_setup: false,
+  airplane_mode_verified: false,
+  offline_scope_note: 'Fixture only — no real model ran; not an offline claim.',
 }
 
 export function fixtureResponse(): AnalyzeResponse {
