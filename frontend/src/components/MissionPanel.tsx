@@ -98,12 +98,16 @@ export function PhoneAwayMode({
 
   useEffect(() => {
     if (!timerOn) return
-    if (remaining <= 0) {
-      setTimerOn(false)
-      setElapsed(true)
-      return
-    }
-    const t = window.setTimeout(() => setRemaining((r) => r - 1), 1000)
+    // Finishing is handled inside the timeout callback — an event — rather than
+    // in the effect body, so the last tick does not start a cascading render.
+    const t = window.setTimeout(() => {
+      const next = remaining - 1
+      setRemaining(next)
+      if (next <= 0) {
+        setTimerOn(false)
+        setElapsed(true)
+      }
+    }, 1000)
     return () => window.clearTimeout(t)
   }, [timerOn, remaining])
 
@@ -125,7 +129,11 @@ export function PhoneAwayMode({
       <div className="flex flex-col items-center gap-3">
         {!timerOn && !elapsed && (
           <button
-            onClick={() => setTimerOn(true)}
+            onClick={() => {
+              // A zero-length mission would never tick, so finish it from here.
+              if (remaining <= 0) setElapsed(true)
+              else setTimerOn(true)
+            }}
             className="rounded-full border border-sage/40 px-5 py-2 text-sm text-sage hover:bg-pine"
           >
             Quiet timer ({formatSeconds(mission.duration_seconds)})

@@ -9,11 +9,17 @@ export function useBackendStatus(): {
   const [state, setState] = useState<BackendState>('checking')
   const [nonce, setNonce] = useState(0)
 
-  const recheck = useCallback(() => setNonce((n) => n + 1), [])
+  // The transition back to 'checking' belongs to the event that starts a new
+  // probe, not to the effect body: setting it in the effect would cascade an
+  // extra render every time the probe re-ran. The initial state already covers
+  // the mount case.
+  const recheck = useCallback(() => {
+    setState('checking')
+    setNonce((n) => n + 1)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
-    setState('checking')
     fetchHealth()
       .then((h) => {
         if (cancelled) return

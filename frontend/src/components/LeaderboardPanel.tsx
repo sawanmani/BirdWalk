@@ -31,10 +31,14 @@ export function LeaderboardPanel({ onClose }: { onClose: () => void }) {
   const [metric, setMetric] = useState<Metric>('xp')
   const [country, setCountry] = useState('IN')
 
+  // Captured once at mount. Reading the clock during render would make the memo
+  // below impure (its output would change between renders for no reason), and a
+  // "weekly" figure that jitters while you look at it is not honest data.
+  const [weekAgo] = useState(() => Date.now() - 7 * 86_400_000)
+
   // The only REAL data here is "You": computed from this device's collection.
   const uniqueCount = useMemo(() => uniqueSpeciesCount(observations), [observations])
   const you = useMemo<LeaderboardEntry>(() => {
-    const weekAgo = Date.now() - 7 * 86_400_000
     const weekly = computeXp(
       observations.filter((o) => {
         const t = Date.parse(o.observedAt)
@@ -50,7 +54,7 @@ export function LeaderboardPanel({ onClose }: { onClose: () => void }) {
       weeklyXp: weekly,
       isYou: true,
     }
-  }, [observations, uniqueCount, country])
+  }, [observations, uniqueCount, country, weekAgo])
 
   // sessions is read so the "missions completed" context stays honest if shown.
   void sessions

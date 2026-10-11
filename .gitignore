@@ -31,6 +31,7 @@ data/retest*.png
 data/qoder_check*.png
 data/deploy_step*.png
 data/check_*.png
+data/fixcheck*.png
 
 # live-server runtime noise, not evidence
 data/uvicorn.out
