@@ -174,7 +174,7 @@ function IndiaSpeciesSection() {
         the model is India-specialised or more accurate here. No GPS is
         used.
       </p>
-      <label className="mt-4 flex items-center gap-2 rounded-md border border-moss/30 bg-white px-3 py-2 focus-within:outline focus-within:outline-3 focus-within:outline-pine">
+      <label className="mt-4 flex items-center gap-2 rounded-md border border-moss/30 bg-panel/80 px-3 py-2 focus-within:outline focus-within:outline-3 focus-within:outline-pine">
         <Search size={16} aria-hidden className="text-muted" />
         <span className="sr-only">Search the India shortlist</span>
         <input

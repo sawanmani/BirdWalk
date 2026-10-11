@@ -1,6 +1,13 @@
 import { Leaf } from 'lucide-react'
 import type { BackendState } from '../lib/types'
 import { cn } from '../lib/cn.ts'
+import type { Route } from '../lib/router.ts'
+import {
+  AboutIcon,
+  CollectionIcon,
+  JournalIcon,
+  LeaderboardIcon,
+} from './NavIcons.tsx'
 
 const STATE_LABEL: Record<BackendState, string> = {
   checking: 'Checking local service…',
@@ -11,33 +18,48 @@ const STATE_LABEL: Record<BackendState, string> = {
   error: 'Local service error',
 }
 
+type Tab = {
+  route: Route
+  label: string
+  Icon: typeof CollectionIcon
+  active: string
+}
+
+const TABS: Tab[] = [
+  { route: '/collection', label: 'Collection', Icon: CollectionIcon, active: 'bg-teal text-paper shadow-sm' },
+  { route: '/leaderboard', label: 'Leaderboard', Icon: LeaderboardIcon, active: 'bg-glow text-paper shadow-sm' },
+  { route: '/journal', label: 'Journal', Icon: JournalIcon, active: 'bg-coral text-paper shadow-sm' },
+  { route: '/about', label: 'About', Icon: AboutIcon, active: 'bg-sky text-paper shadow-sm' },
+]
+
 export function Header({
   backendState,
-  onHistory,
-  onCollection,
-  onAbout,
-  historyDisabled,
+  route,
+  onNavigate,
+  navDisabled,
 }: {
   backendState: BackendState
-  onHistory: () => void
-  onCollection: () => void
-  onAbout: () => void
-  historyDisabled: boolean
+  route: Route
+  onNavigate: (to: Route) => void
+  navDisabled: boolean
 }) {
   return (
     <header className="sticky top-0 z-30 border-b border-moss/20 bg-paper/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <p className="flex items-center gap-2 font-display text-xl font-semibold text-forest">
+        <button
+          onClick={() => onNavigate('/')}
+          className="flex items-center gap-2 font-display text-xl font-semibold"
+        >
           <span aria-hidden className="grid size-9 place-items-center rounded-full bg-forest text-paper">
             <Leaf size={18} />
           </span>
-          BirdWalk
-        </p>
+          <span className="text-gradient">BirdWalk</span>
+        </button>
 
         <div className="flex items-center gap-1 sm:gap-2">
           <p
             aria-live="polite"
-            className="mr-2 hidden items-center gap-2 text-xs text-muted sm:flex"
+            className="mr-2 hidden items-center gap-2 text-xs text-muted lg:flex"
           >
             <span
               aria-hidden
@@ -54,29 +76,32 @@ export function Header({
             />
             {STATE_LABEL[backendState]}
           </p>
-          <button
-            onClick={onCollection}
-            disabled={historyDisabled}
-            className="rounded-full px-3 py-2 text-sm font-medium text-pine hover:bg-sage/70 disabled:opacity-40"
-          >
-            Collection
-          </button>
-          <button
-            onClick={onHistory}
-            disabled={historyDisabled}
-            className="rounded-full px-3 py-2 text-sm font-medium text-pine hover:bg-sage/70 disabled:opacity-40"
-          >
-            Journal
-          </button>
-          <button
-            onClick={onAbout}
-            className="rounded-full px-3 py-2 text-sm font-medium text-pine hover:bg-sage/70"
-          >
-            About
-          </button>
+
+          <nav className="flex items-center gap-1" aria-label="Primary">
+            {TABS.map(({ route: r, label, Icon, active }) => {
+              const isActive = route === r
+              return (
+                <button
+                  key={r}
+                  onClick={() => onNavigate(r)}
+                  disabled={navDisabled}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors disabled:opacity-40',
+                    isActive
+                      ? active
+                      : 'text-pine hover:bg-sage/70',
+                  )}
+                >
+                  <Icon width={16} height={16} />
+                  <span className="hidden sm:inline">{label}</span>
+                </button>
+              )
+            })}
+          </nav>
         </div>
       </div>
-      <p className="px-4 pb-2 text-xs text-muted sm:hidden" aria-live="polite">
+      <p className="px-4 pb-2 text-xs text-muted lg:hidden" aria-live="polite">
         {STATE_LABEL[backendState]}
       </p>
     </header>

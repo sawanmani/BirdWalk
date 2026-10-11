@@ -12,6 +12,7 @@ import {
 } from './components/MissionPanel.tsx'
 import { HistoryPanel } from './components/HistoryPanel.tsx'
 import { CollectionPanel } from './components/CollectionPanel.tsx'
+import { LeaderboardPanel } from './components/LeaderboardPanel.tsx'
 import { AboutPanel } from './components/AboutPanel.tsx'
 import { StatusBanner } from './components/ui.tsx'
 import {
@@ -32,13 +33,19 @@ import {
 import { canonicalSpeciesKey } from './lib/speciesKey.ts'
 import {
   confirmObservation,
+  loadObservations,
   observationFromPrediction,
   saveObservation,
+  uniqueSpeciesCount,
   type Observation,
 } from './lib/observations.ts'
 import { useBackendStatus } from './hooks/useBackendStatus.ts'
+import { useRouter } from './lib/router.ts'
 import type { AnalyzeResponse, Mission, MissionResponse, SampleEntry } from './lib/types.ts'
 
+// `step` now models ONLY the core identification wizard. The menu destinations
+// (Collection / Leaderboard / Journal / About) are real routes, so browser
+// Back/Forward works and you can always return to where the wizard left off.
 type Step =
   | 'start'
   | 'listen_record'
@@ -48,20 +55,18 @@ type Step =
   | 'mission'
   | 'phone_away'
   | 'mission_done'
-  | 'journal'
-  | 'collection'
-  | 'about'
 
 export default function App() {
   const { state: backendState, recheck } = useBackendStatus()
+  const { route, navigate } = useRouter()
   const [step, setStep] = useState<Step>('start')
-  const [prevStep, setPrevStep] = useState<Step>('start')
   const [samples, setSamples] = useState<SampleEntry[]>([])
   const [result, setResult] = useState<AnalyzeResponse | null>(null)
   const [missionData, setMissionData] = useState<MissionResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [stage, setStage] = useState<0 | 1 | 2>(0)
   const [savedObs, setSavedObs] = useState<Observation | null>(null)
+  const [discovery, setDiscovery] = useState<{ name: string; count: number } | null>(null)
   const sessionRef = useRef<SessionRecord | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
@@ -71,10 +76,7 @@ export default function App() {
       .catch(() => setSamples([]))
   }, [backendState])
 
-  const go = (next: Step) => {
-    setPrevStep(step)
-    setStep(next)
-  }
+  const go = (next: Step) => setStep(next)
 
   const handleSubmit = useCallback(async (sub: Submission) => {
     setError(null)
@@ -107,6 +109,7 @@ export default function App() {
       }
       setResult(res)
       setSavedObs(null)
+      setDiscovery(null)
       sessionRef.current = {
         id: newId(),
         createdAt: new Date().toISOString(),
@@ -195,8 +198,13 @@ export default function App() {
         notes: meta.notes,
         coarseLocation: meta.coarseLocation,
       })
+      const before = uniqueSpeciesCount(loadObservations())
       saveObservation(obs)
+      const after = uniqueSpeciesCount(loadObservations())
       setSavedObs(obs)
+      // Brief, honest first-discovery celebration: only when a genuinely new
+      // unique species entered the collection (dedup is by canonical key).
+      if (after > before) setDiscovery({ name: obs.speciesCommonName, count: after })
     },
     [result],
   )
@@ -223,13 +231,24 @@ export default function App() {
     <div className="flex min-h-screen flex-col">
       <Header
         backendState={backendState}
-        historyDisabled={step === 'mission' || step === 'phone_away'}
-        onHistory={() => go('journal')}
-        onCollection={() => go('collection')}
-        onAbout={() => go('about')}
+        route={route}
+        onNavigate={navigate}
+        navDisabled={step === 'mission' || step === 'phone_away'}
       />
 
       <main className="flex-1">
+        {route !== '/' ? (
+          route === '/collection' ? (
+            <CollectionPanel onClose={() => navigate('/')} onChanged={() => undefined} />
+          ) : route === '/leaderboard' ? (
+            <LeaderboardPanel onClose={() => navigate('/')} />
+          ) : route === '/journal' ? (
+            <HistoryPanel onClose={() => navigate('/')} onChanged={() => undefined} />
+          ) : (
+            <AboutPanel samples={samples} onClose={() => navigate('/')} />
+          )
+        ) : (
+          <>
         {(backendState === 'online_assets_missing' ||
           backendState === 'online_package_missing' ||
           backendState === 'offline') &&
@@ -298,6 +317,16 @@ export default function App() {
                 </StatusBanner>
               </div>
             )}
+            {discovery && (
+              <div className="mx-auto mt-4 w-full max-w-xl px-4 sm:px-6">
+                <StatusBanner tone="info" dismissible onDismiss={() => setDiscovery(null)}>
+                  <strong>New species discovered!</strong> You added{' '}
+                  {discovery.name} to your BirdWalk collection — now{' '}
+                  {discovery.count} {discovery.count === 1 ? 'species' : 'species'}
+                  on this device. Now go enjoy the birds around you.
+                </StatusBanner>
+              </div>
+            )}
             <ResultCard
               result={result}
               onMission={() => void requestMission()}
@@ -355,21 +384,6 @@ export default function App() {
           </>
         )}
 
-        {step === 'journal' && (
-          <HistoryPanel onClose={() => setStep(prevStep === 'journal' ? 'start' : prevStep)} onChanged={() => undefined} />
-        )}
-
-        {step === 'collection' && (
-          <CollectionPanel
-            onClose={() => setStep(prevStep === 'collection' ? 'start' : prevStep)}
-            onChanged={() => undefined}
-          />
-        )}
-
-        {step === 'about' && (
-          <AboutPanel samples={samples} onClose={() => setStep(prevStep === 'about' ? 'start' : prevStep)} />
-        )}
-
         {step === 'start' && error === null && result !== null && (
           <div className="mx-auto w-full max-w-xl px-4 pb-8 text-center sm:px-6">
             <p className="text-sm text-muted">
@@ -381,6 +395,8 @@ export default function App() {
               </button>
             </p>
           </div>
+        )}
+          </>
         )}
       </main>
 

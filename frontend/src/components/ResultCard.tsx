@@ -9,6 +9,14 @@ function scoreBar(score: number): string {
   return `${Math.round(Math.min(1, Math.max(0, score)) * 100)}%`
 }
 
+// Colour-code the bar by what the number actually is — the raw strength of the
+// classifier's signal — not "accuracy". Bands are honest, model-output wording.
+function scoreBand(score: number): { fill: string; label: string } {
+  if (score >= 0.6) return { fill: 'bg-pine', label: 'strong signal' }
+  if (score >= 0.3) return { fill: 'bg-sunlit', label: 'moderate signal' }
+  return { fill: 'bg-danger', label: 'weak signal' }
+}
+
 export type SavedStatus = 'none' | 'ai_suggested' | 'user_confirmed'
 
 export function ResultCard({
@@ -89,8 +97,8 @@ export function ResultCard({
               key={p.rank}
               className={
                 i === 0
-                  ? 'card-field border-pine/40 bg-white px-6 py-5'
-                  : 'card-field bg-white/60 px-6 py-4'
+                  ? 'card-field border-pine/40 bg-panel/90 px-6 py-5'
+                  : 'card-field bg-panel/60 px-6 py-4'
               }
             >
               <p className="flex items-center gap-3">
@@ -122,12 +130,13 @@ export function ResultCard({
                   className="h-1.5 flex-1 overflow-hidden rounded-full bg-sage"
                 >
                   <span
-                    className="block h-full rounded-full bg-moss"
+                    className={`block h-full rounded-full ${scoreBand(p.model_score).fill}`}
                     style={{ width: scoreBar(p.model_score) }}
                   />
                 </span>
                 <span className="tabular-nums">
-                  model score {p.model_score.toFixed(2)}
+                  model score {p.model_score.toFixed(2)} ·{' '}
+                  {scoreBand(p.model_score).label}
                 </span>
               </p>
             </li>
@@ -166,7 +175,7 @@ export function ResultCard({
         <div className="mt-5">
           {savedStatus === 'none' && (
             showDetails ? (
-              <div className="card-field flex flex-col gap-3 bg-white/60 px-5 py-4">
+              <div className="card-field flex flex-col gap-3 bg-panel/60 px-5 py-4">
                 <label className="flex flex-col gap-1 text-sm text-ink">
                   Field note (optional)
                   <input
@@ -217,7 +226,7 @@ export function ResultCard({
           )}
           {savedStatus === 'ai_suggested' && (
             <div className="flex flex-wrap items-center gap-3">
-              <p className="text-sm text-pine" role="status">
+              <p className="text-sm text-sunlit" role="status">
                 Saved to your collection (AI suggestion — not yet confirmed).
               </p>
               <Button variant="secondary" onClick={onConfirmSpecies}>

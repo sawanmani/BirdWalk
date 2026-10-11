@@ -252,6 +252,24 @@ what deletion means. No changes to identification offline guarantee.
 > remains; no silently-kept sighting). No network, no new storage, no change
 > to the identification offline guarantee.
 
+### Phase 7 (local) — Achievements, titles & an honest leaderboard view
+
+> **STATUS — IMPLEMENTED (2026-10-11).** `frontend/src/lib/achievements.ts`
+> derives badges + titles **purely** from local data (unique species, species
+> from the user's **own** recordings, completed missions, distinct typed broad
+> areas, days since first find) — recomputed every render, idempotent, no
+> daily-open streaks, no invented rarity/verified states. `titleForSpeciesCount`
+> maps a life-list tier (Beginner Birder → BirdWalk Legend). Surfaced in
+> `CollectionPanel`.
+>
+> `frontend/src/lib/leaderboard.ts` + `LeaderboardPanel.tsx` render a
+> **clearly-labelled demo board**: the only real row is "You (this device)"
+> from local XP/species; every peer is flagged `sample` and a persistent
+> banner states a live global/country/weekly board needs accounts + a server
+> (Track B). Deterministic sort + tie-break, unit-tested. This is the §6
+> "clearly-labelled leaderboard requires backend" boundary made browsable — it
+> ships **no** mock data presented as real and adds **no** network/account.
+
 ---
 
 ## 6. Track B — boundary (documented, NOT implemented here)

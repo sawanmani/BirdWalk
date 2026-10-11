@@ -1,28 +1,48 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------
-   BirdWalk design tokens — "field journal meets premium nature-tech"
-   Palette from BUILD_PROMPTS.md §2. Fonts are bundled locally via
-   @fontsource so offline use degrades gracefully to system stacks.
+   BirdWalk design tokens — a "deep woods at dawn" dark identity.
+   Colours are chosen to match the project's REAL cause — a local-first,
+   touch-grass bird-sound companion — not a generic fintech look, and
+   they carry meaning:
+     green (forest/pine) = alive / ready / you-confirmed
+     amber (sunlit/glow) = a warm caution: an AI suggestion, model not ready
+     teal/sky            = neutral information, labelled sample data
+     clay (danger)       = offline / error
+     moss                = quiet structure (borders, decor)
 ------------------------------------------------------------------- */
 @theme {
-  --color-forest: #173d32;
-  --color-pine: #285a45;
-  --color-moss: #78936b;
-  --color-paper: #f5f1e7;
-  --color-sage: #e5ebdd;
-  --color-sunlit: #e8bd62;
-  --color-ink: #1e2924;
-  --color-muted: #68746c;
-  --color-danger: #b5473c;
+  /* Core surfaces (deep forest night) */
+  --color-paper: #0b1410; /* darkest green-black: page + header bg, text on bright buttons */
+  --color-sage: #14211a; /* elevated dark moss surface (bg-sage/xx chips, hovers) */
+  --color-panel: #101b15; /* glass card / row fill */
+
+  /* Brand + primary text (living greens) */
+  --color-forest: #57d68a; /* leaf green: headings + primary button/brand bg */
+  --color-pine: #2fae72; /* deeper green: links, nav idle, CONFIRMED state */
+  --color-ink: #e4efe6; /* main light text (soft, faintly green-white) */
+  --color-muted: #8ea294; /* secondary light text */
+
+  /* Structure */
+  --color-moss: #4d6a55; /* muted foliage: borders + decorative icons */
+
+  /* Accents — each maps to a real meaning */
+  --color-sunlit: #e8b13f; /* dawn amber: AI-SUGGESTED / model not ready */
+  --color-danger: #e2695a; /* clay red: offline / error */
+  --color-teal: #2ec4b6; /* kingfisher teal: informational */
+  --color-glow: #e8b13f; /* leaderboard gold */
+  --color-coral: #ef8354; /* sunset orange: journal */
+  --color-sky: #6bb0e8; /* sky blue: labelled SAMPLE data / about */
+  --color-violet: #7c5cff; /* kept minimal; no longer the identity hue */
 
   --font-display: 'Fraunces', 'DM Serif Display', Georgia, 'Times New Roman',
     serif;
   --font-sans: 'DM Sans', Inter, ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, sans-serif;
 
-  --radius-card: 20px;
-  --shadow-card: 0 1px 2px rgb(30 41 36 / 0.06), 0 12px 32px -12px rgb(23 61 50 / 0.18);
+  --radius-card: 22px;
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 18px 40px -20px rgb(0 0 0 / 0.65);
 }
 
 @layer base {
@@ -31,10 +51,14 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans antialiased;
-    /* Subtle paper grain so large cream fields don't look flat */
-    background-image: radial-gradient(rgb(23 61 50 / 0.03) 1px, transparent 1px);
-    background-size: 22px 22px;
+    @apply text-ink font-sans antialiased;
+    /* Forest-night base with two soft brand glows, fixed so it reads as one surface */
+    background:
+      radial-gradient(1100px 600px at 100% -8%, rgb(87 214 138 / 0.16), transparent 60%),
+      radial-gradient(900px 520px at -12% 2%, rgb(232 177 63 / 0.12), transparent 55%),
+      #0b1410;
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
   /* Fluid editorial type */
@@ -54,7 +78,7 @@
 
   /* Accessible, always-visible focus */
   :focus-visible {
-    outline: 3px solid var(--color-pine);
+    outline: 3px solid var(--color-teal);
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -80,9 +104,16 @@
 }
 
 @utility card-field {
-  @apply rounded-(--radius-card) border border-moss/25 bg-white/80 shadow-(--shadow-card);
+  @apply rounded-(--radius-card) border border-moss/20 bg-panel/70 shadow-(--shadow-card) backdrop-blur-md;
 }
 
 @utility kicker {
   @apply text-xs font-semibold uppercase tracking-[0.18em] text-muted;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(100deg, var(--color-forest), var(--color-teal) 55%, var(--color-sunlit));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

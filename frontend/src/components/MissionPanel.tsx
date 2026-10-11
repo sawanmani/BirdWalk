@@ -42,7 +42,7 @@ export function MissionPanel({
       aria-label="Your mission"
     >
       <Kicker>Your mission</Kicker>
-      <div className="card-field mt-4 border-pine/40 bg-white px-7 py-9">
+      <div className="card-field mt-4 border-pine/40 bg-panel/90 px-7 py-9">
         <span
           aria-hidden
           className="grid size-12 place-items-center rounded-full bg-sage text-forest"

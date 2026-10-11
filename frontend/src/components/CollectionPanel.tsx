@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Bird, Check, MapPin, Sparkles, StickyNote, Trash2 } from 'lucide-react'
+import { Award, Bird, Check, MapPin, Sparkles, StickyNote, Trash2 } from 'lucide-react'
 import { Button, EmptyState, Kicker } from './ui.tsx'
 import { cn } from '../lib/cn.ts'
 import {
@@ -10,8 +10,14 @@ import {
   uniqueSpeciesCount,
   type Observation,
 } from '../lib/observations.ts'
+import { loadSessions } from '../lib/history.ts'
 import { computeXp } from '../lib/xpRules.ts'
 import { computeMilestones, nextMilestone } from '../lib/milestones.ts'
+import {
+  computeAchievementInput,
+  computeAchievements,
+  titleForSpeciesCount,
+} from '../lib/achievements.ts'
 
 function shortDate(iso: string): string {
   const d = new Date(iso)
@@ -33,6 +39,11 @@ export function CollectionPanel({
   const xp = useMemo(() => computeXp(observations), [observations])
   const milestones = useMemo(() => computeMilestones(uniqueCount), [uniqueCount])
   const next = useMemo(() => nextMilestone(uniqueCount), [uniqueCount])
+  const achievements = useMemo(
+    () => computeAchievements(computeAchievementInput(observations, loadSessions())),
+    [observations],
+  )
+  const title = useMemo(() => titleForSpeciesCount(uniqueCount), [uniqueCount])
 
   const refresh = (next: Observation[]) => {
     setObservations(next)
@@ -117,6 +128,47 @@ export function CollectionPanel({
             ))}
           </ul>
 
+          <div className="mt-6">
+            <h3 className="font-display text-lg text-forest">Achievements</h3>
+            {title && (
+              <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-pine">
+                <Award size={14} aria-hidden /> Current title: <strong>{title.name}</strong>
+              </p>
+            )}
+            <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {achievements.map((a) => (
+                <li
+                  key={a.id}
+                  title={a.blurb}
+                  className={cn(
+                    'flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs',
+                    a.achieved
+                      ? 'border-pine/40 bg-pine/10 text-pine'
+                      : 'border-moss/20 bg-panel/50 text-muted',
+                  )}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    {a.achieved ? (
+                      <Check size={12} aria-hidden />
+                    ) : (
+                      <Award size={12} aria-hidden />
+                    )}
+                    <span className="font-medium">{a.title}</span>
+                  </span>
+                  <span className="tabular-nums">
+                    {a.progress}/{a.target}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-muted">
+              Recomputed from this device&rsquo;s data — species found, your own
+              recordings, missions completed, broad areas you typed, and days
+              since your first find. Nothing is uploaded, and there are no
+              daily-open streaks by design.
+            </p>
+          </div>
+
           <ul className="mt-5 flex flex-col gap-3">
             {species.map((s) => (
               <li key={s.speciesKey} className="card-field px-5 py-4 text-sm">
@@ -155,7 +207,7 @@ export function CollectionPanel({
               {recent.map((o) => (
                 <li
                   key={o.id}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-moss/20 bg-white/60 px-4 py-2.5 text-sm"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-moss/20 bg-panel/60 px-4 py-2.5 text-sm"
                 >
                   <span className="min-w-0">
                     <span className="block truncate font-medium text-ink">

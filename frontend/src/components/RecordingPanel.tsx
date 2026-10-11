@@ -45,6 +45,13 @@ export function RecordingPanel({
   // Waveform visualisation (decorative; skipped for reduced motion)
   useEffect(() => {
     if (recorder.state !== 'recording' || reduced) return
+    // Read the live brand colour from the CSS token so the bars always match
+    // the theme (was a hardcoded light-theme green that went invisible on the
+    // dark background).
+    const barColor =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-forest')
+        .trim() || '#57d68a'
     const draw = () => {
       const analyser = recorder.analyserRef.current
       const canvas = canvasRef.current
@@ -55,7 +62,7 @@ export function RecordingPanel({
           analyser.getByteFrequencyData(data)
           const { width, height } = canvas
           ctx.clearRect(0, 0, width, height)
-          ctx.fillStyle = '#285a45'
+          ctx.fillStyle = barColor
           const bars = 48
           const step = Math.floor(data.length / bars)
           for (let i = 0; i < bars; i += 1) {
@@ -256,7 +263,7 @@ export function RecordingPanel({
                         sourceLabel: s.species_label,
                       })
                     }
-                    className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-moss/25 bg-white/70 px-5 py-4 text-left transition-colors hover:border-pine/60 hover:bg-sage/40 disabled:opacity-50"
+                    className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-moss/25 bg-panel/70 px-5 py-4 text-left transition-colors hover:border-pine/60 hover:bg-sage/60 disabled:opacity-50"
                   >
                     <span className="flex items-center gap-3">
                       <Bird size={18} aria-hidden className="text-moss" />
