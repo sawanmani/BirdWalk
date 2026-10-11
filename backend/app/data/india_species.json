@@ -1,0 +1,509 @@
+{
+  "generated_at": "2026-10-11T07:30:21.489565+00:00",
+  "method": "Candidate common Indian birds cross-checked against the official BirdNET GLOBAL 6K V2.4 label file by scientific name (exact binomial match).",
+  "disclaimer": "Label-presence verification only. Not a claim that BirdNET is India-specialized or more accurate for Indian species. No GPS or location inference.",
+  "total_candidates": 86,
+  "verified_count": 69,
+  "species": [
+    {
+      "species_common_name": "Indian Robin",
+      "species_scientific_name": "Copsychus fulicatus",
+      "birdnet_label": "Copsychus fulicatus_Indian Robin",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Red-whiskered Bulbul",
+      "species_scientific_name": "Pycnonotus jocosus",
+      "birdnet_label": "Pycnonotus jocosus_Red-whiskered Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-throated Bulbul",
+      "species_scientific_name": "Alophoixus flaveolus",
+      "birdnet_label": "Alophoixus flaveolus_White-throated Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Yellow-browed Bulbul",
+      "species_scientific_name": "Pycnonotus barbatus",
+      "birdnet_label": "Pycnonotus barbatus_Common Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Asian Koel",
+      "species_scientific_name": "Eudynamys scolopaceus",
+      "birdnet_label": "Eudynamys scolopaceus_Asian Koel",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Hawk-Cuckoo",
+      "species_scientific_name": "Hierococcyx varius",
+      "birdnet_label": "Hierococcyx varius_Common Hawk-Cuckoo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Indian Cuckoo",
+      "species_scientific_name": "Cuculus micropterus",
+      "birdnet_label": "Cuculus micropterus_Indian Cuckoo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Ashy Drongo",
+      "species_scientific_name": "Dicrurus leucophaeus",
+      "birdnet_label": "Dicrurus leucophaeus_Ashy Drongo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Black Drongo",
+      "species_scientific_name": "Dicrurus macrocercus",
+      "birdnet_label": "Dicrurus macrocercus_Black Drongo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-bellied Drongo",
+      "species_scientific_name": "Dicrurus caerulescens",
+      "birdnet_label": "Dicrurus caerulescens_White-bellied Drongo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Crimson Sunbird",
+      "species_scientific_name": "Aethopyga siparaja",
+      "birdnet_label": "Aethopyga siparaja_Crimson Sunbird",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Purple Sunbird",
+      "species_scientific_name": "Cinnyris asiaticus",
+      "birdnet_label": "Cinnyris asiaticus_Purple Sunbird",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Olive-backed Sunbird",
+      "species_scientific_name": "Cinnyris jugularis",
+      "birdnet_label": "Cinnyris jugularis_Olive-backed Sunbird",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Asian Palm Swift",
+      "species_scientific_name": "Hemiprocne comata",
+      "birdnet_label": "Hemiprocne comata_Whiskered Treeswift",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "House Swift",
+      "species_scientific_name": "Apus nipalensis",
+      "birdnet_label": "Apus nipalensis_House Swift",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Indian Grey Hornbill",
+      "species_scientific_name": "Ocyceros birostris",
+      "birdnet_label": "Ocyceros birostris_Indian Gray Hornbill",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Oriental Magpie-Robin",
+      "species_scientific_name": "Copsychus saularis",
+      "birdnet_label": "Copsychus saularis_Oriental Magpie-Robin",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-throated Robin",
+      "species_scientific_name": "Irania gutturalis",
+      "birdnet_label": "Irania gutturalis_White-throated Robin",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Red-vented Bulbul",
+      "species_scientific_name": "Pycnonotus cafer",
+      "birdnet_label": "Pycnonotus cafer_Red-vented Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-eared Bulbul",
+      "species_scientific_name": "Pycnonotus leucotis",
+      "birdnet_label": "Pycnonotus leucotis_White-eared Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Himalayan Bulbul",
+      "species_scientific_name": "Pycnonotus leucogenys",
+      "birdnet_label": "Pycnonotus leucogenys_Himalayan Bulbul",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Yellow-footed Green-Pigeon",
+      "species_scientific_name": "Treron phoenicopterus",
+      "birdnet_label": "Treron phoenicopterus_Yellow-footed Green-Pigeon",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Emerald Dove",
+      "species_scientific_name": "Chalcophaps indica",
+      "birdnet_label": "Chalcophaps indica_Asian Emerald Dove",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Indian Peafowl",
+      "species_scientific_name": "Pavo cristatus",
+      "birdnet_label": "Pavo cristatus_Indian Peafowl",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Jungle Babbler",
+      "species_scientific_name": "Argya striata",
+      "birdnet_label": "Argya striata_Jungle Babbler",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Large Grey Babbler",
+      "species_scientific_name": "Argya malcolmi",
+      "birdnet_label": "Argya malcolmi_Large Gray Babbler",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Myna",
+      "species_scientific_name": "Acridotheres tristis",
+      "birdnet_label": "Acridotheres tristis_Common Myna",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Jungle Myna",
+      "species_scientific_name": "Acridotheres fuscus",
+      "birdnet_label": "Acridotheres fuscus_Jungle Myna",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Brahminy Starling",
+      "species_scientific_name": "Sturnia pagodarum",
+      "birdnet_label": "Sturnia pagodarum_Brahminy Starling",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Asian Openbill",
+      "species_scientific_name": "Anastomus oscitans",
+      "birdnet_label": "Anastomus oscitans_Asian Openbill",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Painted Stork",
+      "species_scientific_name": "Mycteria leucocephala",
+      "birdnet_label": "Mycteria leucocephala_Painted Stork",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Black-headed Ibis",
+      "species_scientific_name": "Threskiornis melanocephalus",
+      "birdnet_label": "Threskiornis melanocephalus_Black-headed Ibis",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Purple Heron",
+      "species_scientific_name": "Ardea purpurea",
+      "birdnet_label": "Ardea purpurea_Purple Heron",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Cattle Egret",
+      "species_scientific_name": "Bubulcus ibis",
+      "birdnet_label": "Bubulcus ibis_Cattle Egret",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-breasted Waterhen",
+      "species_scientific_name": "Amaurornis phoenicurus",
+      "birdnet_label": "Amaurornis phoenicurus_White-breasted Waterhen",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Indian Pond-Heron",
+      "species_scientific_name": "Ardeola grayii",
+      "birdnet_label": "Ardeola grayii_Indian Pond-Heron",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Yellow-wattled Lapwing",
+      "species_scientific_name": "Vanellus malabaricus",
+      "birdnet_label": "Vanellus malabaricus_Yellow-wattled Lapwing",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Red-wattled Lapwing",
+      "species_scientific_name": "Vanellus indicus",
+      "birdnet_label": "Vanellus indicus_Red-wattled Lapwing",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Eurasian Golden Oriole",
+      "species_scientific_name": "Oriolus oriolus",
+      "birdnet_label": "Oriolus oriolus_Eurasian Golden Oriole",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Black-hooded Oriole",
+      "species_scientific_name": "Oriolus xanthornus",
+      "birdnet_label": "Oriolus xanthornus_Black-hooded Oriole",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Sirkeer Malvaca",
+      "species_scientific_name": "Malacopteron magnum",
+      "birdnet_label": "Malacopteron magnum_Rufous-crowned Babbler",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Ashy Prinia",
+      "species_scientific_name": "Prinia socialis",
+      "birdnet_label": "Prinia socialis_Ashy Prinia",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Rosefinch",
+      "species_scientific_name": "Carpodacus erythrinus",
+      "birdnet_label": "Carpodacus erythrinus_Common Rosefinch",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Crested Serpent-Eagle",
+      "species_scientific_name": "Spilornis cheela",
+      "birdnet_label": "Spilornis cheela_Crested Serpent-Eagle",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Shikra",
+      "species_scientific_name": "Accipiter badius",
+      "birdnet_label": "Accipiter badius_Shikra",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-eyed Buzzard",
+      "species_scientific_name": "Elanus caeruleus",
+      "birdnet_label": "Elanus caeruleus_Black-winged Kite",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Peregrine Falcon",
+      "species_scientific_name": "Falco peregrinus",
+      "birdnet_label": "Falco peregrinus_Peregrine Falcon",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Little Collared Dove",
+      "species_scientific_name": "Streptopelia decaocto",
+      "birdnet_label": "Streptopelia decaocto_Eurasian Collared-Dove",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Rose-ringed Parakeet",
+      "species_scientific_name": "Psittacula krameri",
+      "birdnet_label": "Psittacula krameri_Rose-ringed Parakeet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Plum-headed Parakeet",
+      "species_scientific_name": "Psittacula cyanocephala",
+      "birdnet_label": "Psittacula cyanocephala_Plum-headed Parakeet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Alexandrine Parakeet",
+      "species_scientific_name": "Psittacula eupatria",
+      "birdnet_label": "Psittacula eupatria_Alexandrine Parakeet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Grey-headed Canary-Flycatcher",
+      "species_scientific_name": "Culicicapa ceylonensis",
+      "birdnet_label": "Culicicapa ceylonensis_Gray-headed Canary-Flycatcher",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Tailorbird",
+      "species_scientific_name": "Orthotomus sutorius",
+      "birdnet_label": "Orthotomus sutorius_Common Tailorbird",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Asian Emerald Cuckoo",
+      "species_scientific_name": "Chrysococcyx maculatus",
+      "birdnet_label": "Chrysococcyx maculatus_Asian Emerald Cuckoo",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Blue-winged Barbet",
+      "species_scientific_name": "Psilopogon malabaricus",
+      "birdnet_label": "Psilopogon malabaricus_Malabar Barbet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-throated Barbet",
+      "species_scientific_name": "Psilopogon asiaticus",
+      "birdnet_label": "Psilopogon asiaticus_Blue-throated Barbet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Crimson-fronted Barbet",
+      "species_scientific_name": "Psilopogon rubricapillus",
+      "birdnet_label": "Psilopogon rubricapillus_Crimson-fronted Barbet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Great Barbet",
+      "species_scientific_name": "Psilopogon virens",
+      "birdnet_label": "Psilopogon virens_Great Barbet",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Indian Roller",
+      "species_scientific_name": "Coracias benghalensis",
+      "birdnet_label": "Coracias benghalensis_Indian Roller",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Blue-tailed Bee-eater",
+      "species_scientific_name": "Merops philippinus",
+      "birdnet_label": "Merops philippinus_Blue-tailed Bee-eater",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Green Bee-eater",
+      "species_scientific_name": "Merops orientalis",
+      "birdnet_label": "Merops orientalis_Green Bee-eater",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "European Bee-eater",
+      "species_scientific_name": "Merops apiaster",
+      "birdnet_label": "Merops apiaster_European Bee-eater",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "White-throated Kingfisher",
+      "species_scientific_name": "Halcyon smyrnensis",
+      "birdnet_label": "Halcyon smyrnensis_White-throated Kingfisher",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Kingfisher",
+      "species_scientific_name": "Alcedo atthis",
+      "birdnet_label": "Alcedo atthis_Common Kingfisher",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Chestnut-headed Bee-eater",
+      "species_scientific_name": "Merops leschenaulti",
+      "birdnet_label": "Merops leschenaulti_Chestnut-headed Bee-eater",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Asian Paradise-Flycatcher",
+      "species_scientific_name": "Terpsiphone paradisi",
+      "birdnet_label": "Terpsiphone paradisi_Indian Paradise-Flycatcher",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Common Iora",
+      "species_scientific_name": "Aegithina tiphia",
+      "birdnet_label": "Aegithina tiphia_Common Iora",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Barn Swallow",
+      "species_scientific_name": "Hirundo rustica",
+      "birdnet_label": "Hirundo rustica_Barn Swallow",
+      "label_verified": true
+    },
+    {
+      "species_common_name": "Red-rumped Swallow",
+      "species_scientific_name": "Cecropis daurica",
+      "birdnet_label": "Cecropis daurica_Red-rumped Swallow",
+      "label_verified": true
+    }
+  ],
+  "rejected": [
+    {
+      "species_common_name": "Little Spiderhunter",
+      "species_scientific_name": "Arachnothera penicillata",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "White-throated Swiftlet",
+      "species_scientific_name": "Aerodramus brevirostris",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Malabar Hornbill",
+      "species_scientific_name": "Aceros orientalis",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "King Cobra",
+      "species_scientific_name": "Ophiophagus hannah",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Spotted Dove",
+      "species_scientific_name": "Spilopelia chinensis",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Asian Green Pigeon",
+      "species_scientific_name": "Treron okinavae",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Grey-crowned Prinia",
+      "species_scientific_name": "Prinia criniger",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Indian Vulture",
+      "species_scientific_name": "Gyps indicus",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Egyptian Vulture",
+      "species_scientific_name": "Neophron percnopterus",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Laughing Dove",
+      "species_scientific_name": "Spilopelia senegalensis",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Blyth's Leaf-Warbler",
+      "species_scientific_name": "Calyptomena hosii",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Golden-fronted Leafbird",
+      "species_scientific_name": "Chloropsitta aurifrons",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Grey-headed Fish-Eagle",
+      "species_scientific_name": "Icthyophaga ichthyaetus",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    },
+    {
+      "species_common_name": "Crude control name",
+      "species_scientific_name": "Nonexistentus nowherei",
+      "label_verified": false,
+      "reason": "scientific name not found in BirdNET V2.4 label list"
+    }
+  ]
+}
