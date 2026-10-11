@@ -14,11 +14,13 @@ const STATE_LABEL: Record<BackendState, string> = {
 export function Header({
   backendState,
   onHistory,
+  onCollection,
   onAbout,
   historyDisabled,
 }: {
   backendState: BackendState
   onHistory: () => void
+  onCollection: () => void
   onAbout: () => void
   historyDisabled: boolean
 }) {
@@ -52,6 +54,13 @@ export function Header({
             />
             {STATE_LABEL[backendState]}
           </p>
+          <button
+            onClick={onCollection}
+            disabled={historyDisabled}
+            className="rounded-full px-3 py-2 text-sm font-medium text-pine hover:bg-sage/70 disabled:opacity-40"
+          >
+            Collection
+          </button>
           <button
             onClick={onHistory}
             disabled={historyDisabled}

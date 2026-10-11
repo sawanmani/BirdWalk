@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node --test src/lib/speciesKey.test.ts src/lib/observations.test.ts src/lib/milestones.test.ts src/lib/xpRules.test.ts",
+    "typecheck:test": "tsc -p tsconfig.test.json",
     "preview": "vite preview"
   },
   "dependencies": {

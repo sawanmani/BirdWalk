@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Bird, HelpCircle } from 'lucide-react'
+import { Bird, BookmarkPlus, Check, HelpCircle } from 'lucide-react'
 import { Button, Kicker, StatusBanner } from './ui.tsx'
 import type { AnalyzeResponse } from '../lib/types.ts'
 import { useReducedMotion } from '../hooks/useReducedMotion.ts'
@@ -8,16 +9,43 @@ function scoreBar(score: number): string {
   return `${Math.round(Math.min(1, Math.max(0, score)) * 100)}%`
 }
 
+export type SavedStatus = 'none' | 'ai_suggested' | 'user_confirmed'
+
 export function ResultCard({
   result,
   onMission,
   onAgain,
+  canSaveToCollection = false,
+  savedStatus = 'none',
+  onSaveToCollection,
+  onConfirmSpecies,
 }: {
   result: AnalyzeResponse
   onMission: () => void
   onAgain: () => void
+  /** True when the top match has a canonical key and this is a real result. */
+  canSaveToCollection?: boolean
+  savedStatus?: SavedStatus
+  onSaveToCollection?: (meta: { notes?: string; coarseLocation?: string }) => void
+  onConfirmSpecies?: () => void
 }) {
   const reduced = useReducedMotion()
+  const [showDetails, setShowDetails] = useState(false)
+  const [notesDraft, setNotesDraft] = useState('')
+  const [locDraft, setLocDraft] = useState('')
+
+  const quickSave = () => onSaveToCollection?.({})
+  const saveWithDetails = () => {
+    onSaveToCollection?.({ notes: notesDraft, coarseLocation: locDraft })
+    setShowDetails(false)
+    setNotesDraft('')
+    setLocDraft('')
+  }
+  const cancelDetails = () => {
+    setShowDetails(false)
+    setNotesDraft('')
+    setLocDraft('')
+  }
   const noResult = result.status === 'no_reliable_detection' ||
     result.predictions.length === 0
 
@@ -133,6 +161,78 @@ export function ResultCard({
           Listen again
         </Button>
       </div>
+
+      {!noResult && canSaveToCollection && (
+        <div className="mt-5">
+          {savedStatus === 'none' && (
+            showDetails ? (
+              <div className="card-field flex flex-col gap-3 bg-white/60 px-5 py-4">
+                <label className="flex flex-col gap-1 text-sm text-ink">
+                  Field note (optional)
+                  <input
+                    value={notesDraft}
+                    onChange={(e) => setNotesDraft(e.target.value)}
+                    maxLength={200}
+                    placeholder="e.g. two birds near the pond"
+                    className="rounded-lg border border-moss/30 bg-paper px-3 py-2 text-sm"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm text-ink">
+                  Broad area (optional)
+                  <input
+                    value={locDraft}
+                    onChange={(e) => setLocDraft(e.target.value)}
+                    maxLength={80}
+                    placeholder="e.g. neighbourhood, city park"
+                    className="rounded-lg border border-moss/30 bg-paper px-3 py-2 text-sm"
+                  />
+                </label>
+                <p className="text-xs text-muted">
+                  Broad area only — never your precise location, and nothing is
+                  uploaded. It stays on this device; leave both blank to save
+                  without them.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button onClick={saveWithDetails}>
+                    <BookmarkPlus size={15} aria-hidden /> Save to collection
+                  </Button>
+                  <Button variant="ghost" onClick={cancelDetails}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="ghost" onClick={quickSave}>
+                  <BookmarkPlus size={15} aria-hidden /> Save to collection
+                </Button>
+                <button
+                  onClick={() => setShowDetails(true)}
+                  className="text-xs text-muted underline underline-offset-4 hover:text-ink"
+                >
+                  Add a note or broad area first
+                </button>
+              </div>
+            )
+          )}
+          {savedStatus === 'ai_suggested' && (
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-sm text-pine" role="status">
+                Saved to your collection (AI suggestion — not yet confirmed).
+              </p>
+              <Button variant="secondary" onClick={onConfirmSpecies}>
+                <Check size={15} aria-hidden /> Confirm species
+              </Button>
+            </div>
+          )}
+          {savedStatus === 'user_confirmed' && (
+            <p className="text-sm text-pine" role="status">
+              <Check size={15} aria-hidden className="mr-1 inline" /> Confirmed
+              in your collection.
+            </p>
+          )}
+        </div>
+      )}
     </motion.section>
   )
 }

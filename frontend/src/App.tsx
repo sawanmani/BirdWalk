@@ -4,13 +4,14 @@ import { Hero } from './components/Hero.tsx'
 import { Footer } from './components/Footer.tsx'
 import { RecordingPanel, type Submission } from './components/RecordingPanel.tsx'
 import { AnalysingPanel } from './components/AnalysingPanel.tsx'
-import { ResultCard } from './components/ResultCard.tsx'
+import { ResultCard, type SavedStatus } from './components/ResultCard.tsx'
 import {
   MissionPanel,
   PhoneAwayMode,
   MissionComplete,
 } from './components/MissionPanel.tsx'
 import { HistoryPanel } from './components/HistoryPanel.tsx'
+import { CollectionPanel } from './components/CollectionPanel.tsx'
 import { AboutPanel } from './components/AboutPanel.tsx'
 import { StatusBanner } from './components/ui.tsx'
 import {
@@ -28,6 +29,13 @@ import {
   saveSession,
   type SessionRecord,
 } from './lib/history.ts'
+import { canonicalSpeciesKey } from './lib/speciesKey.ts'
+import {
+  confirmObservation,
+  observationFromPrediction,
+  saveObservation,
+  type Observation,
+} from './lib/observations.ts'
 import { useBackendStatus } from './hooks/useBackendStatus.ts'
 import type { AnalyzeResponse, Mission, MissionResponse, SampleEntry } from './lib/types.ts'
 
@@ -41,6 +49,7 @@ type Step =
   | 'phone_away'
   | 'mission_done'
   | 'journal'
+  | 'collection'
   | 'about'
 
 export default function App() {
@@ -52,6 +61,7 @@ export default function App() {
   const [missionData, setMissionData] = useState<MissionResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [stage, setStage] = useState<0 | 1 | 2>(0)
+  const [savedObs, setSavedObs] = useState<Observation | null>(null)
   const sessionRef = useRef<SessionRecord | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
@@ -96,6 +106,7 @@ export default function App() {
         res = await analyzeAudio(blob, filename, sub.sourceLabel ?? undefined, controller.signal)
       }
       setResult(res)
+      setSavedObs(null)
       sessionRef.current = {
         id: newId(),
         createdAt: new Date().toISOString(),
@@ -168,6 +179,44 @@ export default function App() {
     setStep('mission_done')
   }, [])
 
+  // Explorer League Track A Phase 1: explicit "Save to collection" layered on
+  // top of the auto-saved session. Opt-in only; real results with a canonical
+  // key; never for demo fixtures; nothing auto-marked confirmed.
+  const saveResultToCollection = useCallback(
+    (meta: { notes?: string; coarseLocation?: string } = {}) => {
+      const top = result?.predictions[0]
+      if (!result || !top || result.is_demo_fixture) return
+      if (!canonicalSpeciesKey(top)) return
+      const obs = observationFromPrediction({
+        prediction: top,
+        source: sessionRef.current?.source ?? 'recording',
+        observedAt: new Date().toISOString(),
+        isDemoFixture: result.is_demo_fixture,
+        notes: meta.notes,
+        coarseLocation: meta.coarseLocation,
+      })
+      saveObservation(obs)
+      setSavedObs(obs)
+    },
+    [result],
+  )
+
+  const confirmSaved = useCallback(() => {
+    if (!savedObs) return
+    confirmObservation(savedObs.id)
+    setSavedObs({ ...savedObs, identificationStatus: 'user_confirmed' })
+  }, [savedObs])
+
+  const topForCollection = result?.predictions[0] ?? null
+  const canSaveToCollection =
+    !!result &&
+    result.status === 'ok' &&
+    !result.is_demo_fixture &&
+    canonicalSpeciesKey(topForCollection) !== null
+  const savedStatus: SavedStatus = savedObs
+    ? savedObs.identificationStatus
+    : 'none'
+
   const mission: Mission | null = missionData?.mission ?? null
 
   return (
@@ -176,6 +225,7 @@ export default function App() {
         backendState={backendState}
         historyDisabled={step === 'mission' || step === 'phone_away'}
         onHistory={() => go('journal')}
+        onCollection={() => go('collection')}
         onAbout={() => go('about')}
       />
 
@@ -252,6 +302,10 @@ export default function App() {
               result={result}
               onMission={() => void requestMission()}
               onAgain={() => go('listen_record')}
+              canSaveToCollection={canSaveToCollection}
+              savedStatus={savedStatus}
+              onSaveToCollection={saveResultToCollection}
+              onConfirmSpecies={confirmSaved}
             />
           </>
         )}
@@ -303,6 +357,13 @@ export default function App() {
 
         {step === 'journal' && (
           <HistoryPanel onClose={() => setStep(prevStep === 'journal' ? 'start' : prevStep)} onChanged={() => undefined} />
+        )}
+
+        {step === 'collection' && (
+          <CollectionPanel
+            onClose={() => setStep(prevStep === 'collection' ? 'start' : prevStep)}
+            onChanged={() => undefined}
+          />
         )}
 
         {step === 'about' && (
