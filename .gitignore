@@ -24,3 +24,7 @@ data/uvicorn.err
 .env.local
 Thumbs.db
 .DS_Store
+
+# Vercel deploy artifacts (project link config + CLI temp scripts/logs)
+.vercel/
+.vercel-tmp/

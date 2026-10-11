@@ -1,6 +1,7 @@
 # BirdWalk — local config (paths, limits, dev origins).
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]  # backend/app/core/config.py -> repo root
@@ -10,11 +11,18 @@ INDIA_SPECIES_FILE = Path(__file__).resolve().parent.parent / "data" / "india_sp
 
 # Dev-only origins for CORS. The frontend proxies /api in dev, so this is
 # belt-and-braces; no production origins are enabled anywhere.
+# A deployed frontend (e.g. Render + Vercel) opts in by listing its origin in
+# the BIRDWALK_CORS_ORIGINS env var, comma-separated. The local-first default
+# is unchanged: nothing extra is allowed unless that variable is set.
+_EXTRA_ORIGINS = [
+    o.strip() for o in os.environ.get("BIRDWALK_CORS_ORIGINS", "").split(",") if o.strip()
+]
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:4173",
     "http://127.0.0.1:4173",
+    *_EXTRA_ORIGINS,
 ]
 
 # Upload validation limits (ALIGNMENT/SKILLS: reject early, explain clearly)

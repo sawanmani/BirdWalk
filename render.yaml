@@ -1,0 +1,39 @@
+# BirdWalk backend — Render blueprint (Infrastructure as Code).
+#
+# Render reads this file from the repo root: Dashboard -> New -> Blueprint ->
+# connect github.com/sawanmani/BirdWalk. It creates the web service below.
+#
+# IMPORTANT, measured facts about this stack (do not skip):
+#   * BirdNET-Analyzer 2.4.0 pulls in TensorFlow (~274 MB of model assets
+#     land in site-packages/birdnet_analyzer/checkpoints/V2.4/).
+#   * Importing TensorFlow + loading the SavedModel needs well over 512 MB
+#     resident. Render's `free` (and any 512 MB) instance will be OOM-killed.
+#     Pick an instance with >= 2 GB RAM.
+#   * Model weights are NOT in Git. The build command below downloads them
+#     once at build time via the package's own ensure_model_exists() so the
+#     first request does not pay for it.
+#   * Sample audio is deliberately not committed (licence + size, see
+#     data/samples/README.md), so /api/samples returns an empty list on a
+#     fresh host. Run scripts/download_samples.py in buildCommand if you want
+#     the sample clips available publicly.
+services:
+  - type: web
+    name: birdwalk-api
+    runtime: python
+    rootDir: backend
+    # 512 MB cannot hold TensorFlow — use a 2 GB+ plan.
+    plan: starter
+    region: oregon
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python -c "from birdnet_analyzer.utils import ensure_model_exists; ensure_model_exists()"
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      # BirdNET-Analyzer needs >=3.11 and TensorFlow has no 3.14 wheels.
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      # Comma-separated extra CORS origins, appended to the dev defaults in
+      # backend/app/core/config.py. Set this to your deployed frontend.
+      - key: BIRDWALK_CORS_ORIGINS
+        value: https://birdwalk-three.vercel.app

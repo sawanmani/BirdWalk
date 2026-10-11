@@ -8,6 +8,12 @@ import type {
 
 // All calls are same-origin (/api/...) and proxied to the local FastAPI
 // backend in dev. No third-party endpoints exist in this app.
+//
+// A deployed frontend can point at a hosted backend by setting VITE_API_BASE
+// (e.g. https://birdwalk-api.onrender.com). Left unset, behaviour is exactly
+// as before: same-origin requests only.
+const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/+$/, '')
+const api = (path: string) => `${API_BASE}${path}`
 
 async function request<T>(
   path: string,
@@ -53,17 +59,17 @@ export interface HealthResult {
 }
 
 export const fetchHealth = () =>
-  request<HealthResult>('/api/health', undefined, 5_000)
+  request<HealthResult>(api('/api/health'), undefined, 5_000)
 
 export const fetchModelInfo = () =>
-  request<ModelInfo>('/api/model-info', undefined, 5_000)
+  request<ModelInfo>(api('/api/model-info'), undefined, 5_000)
 
 export const fetchSamples = () =>
-  request<{ samples: SampleEntry[] }>('/api/samples', undefined, 5_000)
+  request<{ samples: SampleEntry[] }>(api('/api/samples'), undefined, 5_000)
 
 export const fetchIndiaSpecies = (q?: string) =>
   request<IndiaSpeciesResponse>(
-    `/api/india-species${q ? `?q=${encodeURIComponent(q)}` : ''}`,
+    api(`/api/india-species${q ? `?q=${encodeURIComponent(q)}` : ''}`),
     undefined,
     5_000,
   )
@@ -75,7 +81,7 @@ export async function analyzeSampleFile(
   const controller = new AbortController()
   signal?.addEventListener('abort', () => controller.abort())
   const res = await fetch(
-    `/api/analyze?sample_id=${encodeURIComponent(sampleId)}`,
+    api(`/api/analyze?sample_id=${encodeURIComponent(sampleId)}`),
     { method: 'POST', signal: controller.signal },
   )
   if (!res.ok) {
@@ -98,7 +104,7 @@ export async function analyzeAudio(
   signal?.addEventListener('abort', () => controller.abort())
   const timeout = window.setTimeout(() => controller.abort(), 90_000)
   try {
-    const res = await fetch('/api/analyze', {
+    const res = await fetch(api('/api/analyze'), {
       method: 'POST',
       body: form,
       signal: controller.signal,
@@ -119,7 +125,7 @@ export function fetchMission(payload: {
   uncertain?: boolean
   screen_free?: boolean
 }): Promise<MissionResponse> {
-  return request<MissionResponse>('/api/mission', {
+  return request<MissionResponse>(api('/api/mission'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
