@@ -1,0 +1,26 @@
+# Dependencies & builds
+node_modules/
+dist/
+__pycache__/
+*.pyc
+backend/.venv/
+.venv/
+
+# Sample audio is NOT redistributed in the repository (licence + size).
+# Reproduce with scripts/download_samples.py; the manifest stays tracked.
+data/samples/*
+!data/samples/manifest.json
+!data/samples/README.md
+data/_dbg/
+data/*.txt
+# evidence transcript referenced by MODEL_CARD/TEST_REPORT
+!data/smoke_run.txt
+# live-server runtime noise, not evidence
+data/uvicorn.out
+data/uvicorn.err
+
+# Local env / OS noise
+.env
+.env.local
+Thumbs.db
+.DS_Store
