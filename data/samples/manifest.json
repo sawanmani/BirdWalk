@@ -1,0 +1,129 @@
+{
+  "policy": "Audio files are NOT committed to Git. Re-run this script to fetch them under their individual licences.",
+  "source": "Wikimedia Commons (MediaWiki action=query API). Xeno-canto was tried first; its API returned 404 in this environment.",
+  "retrieved": "2026-10-11T06:43:54.644723+00:00",
+  "usage": "Local pipeline smoke tests and in-app demo samples only. Not a field test. Not an accuracy benchmark.",
+  "label_provenance": "Species names come from the uploader's own identification on Commons.",
+  "samples": [
+    {
+      "id": "WC_Indian_robin_call_and_song_recorded_in_February_2022_at_Hari.wav",
+      "species_label": "Indian Robin (source claim)",
+      "scientific_name": "Copsychus fulicatus",
+      "file": "WC_Indian_robin_call_and_song_recorded_in_February_2022_at_Hari.wav",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Indian_robin_call_and_song_recorded_in_February_2022_at_Haripur,_Sangli.wav",
+      "direct_file_url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Indian_robin_call_and_song_recorded_in_February_2022_at_Haripur%2C_Sangli.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "creator": "Sharadapte",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Indian robin call and song recorded in February 2022 at Haripur, Sangli",
+      "downloaded_at": "2026-10-11",
+      "checksum_sha256": "b9da5b15e8437850e7a2bffd20086c17250fdbd7b9c8fe22ebbfdb1407c37487",
+      "label_independently_verified": false,
+      "audio_checks": {
+        "duration_seconds": 16.867,
+        "sample_rate": 48000,
+        "channels": 1,
+        "format": "WAV",
+        "subtype": "PCM_24",
+        "rms": 0.058315
+      },
+      "already_on_disk": false,
+      "notes": "Metadata-based smoke test input only; uploader label not independently verified."
+    },
+    {
+      "id": "WC_Red_whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti_.wav",
+      "species_label": "Red-whiskered Bulbul (source claim)",
+      "scientific_name": "Pycnonotus cafer",
+      "file": "WC_Red_whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti_.wav",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Red-whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti,_Karnataka.wav",
+      "direct_file_url": "https://upload.wikimedia.org/wikipedia/commons/3/39/Red-whiskered_bulbul_call_recorded_in_March_2006_at_Jamboti%2C_Karnataka.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "creator": "Sharadapte",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Red-whiskered bulbul call recorded in March 2006 at Jamboti, Karnataka",
+      "downloaded_at": "2026-10-11",
+      "checksum_sha256": "d990a21e4aa60038154109a75ce88d77fef98717e78db4942274f8e50e09dade",
+      "label_independently_verified": false,
+      "audio_checks": {
+        "duration_seconds": 12.873,
+        "sample_rate": 44100,
+        "channels": 1,
+        "format": "WAV",
+        "subtype": "PCM_24",
+        "rms": 0.077827
+      },
+      "already_on_disk": false,
+      "notes": "Metadata-based smoke test input only; uploader label not independently verified."
+    },
+    {
+      "id": "WC_Pycnonotus_jocosus_Red_whiskered_Bulbul_XC538779_mp3.mp3",
+      "species_label": "Red-whiskered Bulbul (source claim)",
+      "scientific_name": "Pycnonotus cafer",
+      "file": "WC_Pycnonotus_jocosus_Red_whiskered_Bulbul_XC538779_mp3.mp3",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Pycnonotus_jocosus_-_Red-whiskered_Bulbul_XC538779.mp3",
+      "direct_file_url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Pycnonotus_jocosus_-_Red-whiskered_Bulbul_XC538779.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "creator": "Subhashish Panigrahi",
+      "license": "CC BY-SA 4.0",
+      "attribution": ":The bird is most likely a Pycnonotus jocosus but it would be great if someone more knowledgeable can help identify. Thanks!\nbird-seen:yes\nCommon name: Red-whiskered Bulbul\nType: call, life stage uncertain, sex uncertain\nGenus: Pycnonotus\nSpecies: jocosus\nLocation: Bengaluru, Bangalore Urban, Karnataka\nCountry: India\nElevation: 900 m",
+      "downloaded_at": "2026-10-11",
+      "checksum_sha256": "423001f3454889cdd380b7c4add206aea20dde459acae847a1b78b5030e54471",
+      "label_independently_verified": false,
+      "audio_checks": {
+        "duration_seconds": 129.026,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "MP3",
+        "subtype": "MPEG_LAYER_III",
+        "rms": 0.019807
+      },
+      "already_on_disk": false,
+      "notes": "Metadata-based smoke test input only; uploader label not independently verified."
+    },
+    {
+      "id": "WC_Asian_Koel_ogg.ogg",
+      "species_label": "Asian Koel (source claim)",
+      "scientific_name": "Eudynamys scolopaceus",
+      "file": "WC_Asian_Koel_ogg.ogg",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Asian_Koel.ogg",
+      "direct_file_url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Asian_Koel.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "creator": "Philip Eapen",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Recording of the call of the Asian Koel in Kochi, India",
+      "downloaded_at": "2026-10-11",
+      "checksum_sha256": "e88e306b778d3cb688aab0630e4e738e36dba6d80399a7632df78ac4967d85f7",
+      "label_independently_verified": false,
+      "audio_checks": {
+        "duration_seconds": 6.807,
+        "sample_rate": 44100,
+        "channels": 1,
+        "format": "OGG",
+        "subtype": "VORBIS",
+        "rms": 0.065652
+      },
+      "already_on_disk": false,
+      "notes": "Metadata-based smoke test input only; uploader label not independently verified."
+    },
+    {
+      "id": "WC_Eudynamys_scolopaceus_Asian_Koel_XC476378_mp3.mp3",
+      "species_label": "Asian Koel (source claim)",
+      "scientific_name": "Eudynamys scolopaceus",
+      "file": "WC_Eudynamys_scolopaceus_Asian_Koel_XC476378_mp3.mp3",
+      "source_page_url": "https://commons.wikimedia.org/wiki/File:Eudynamys_scolopaceus_-_Asian_Koel_XC476378.mp3",
+      "direct_file_url": "https://upload.wikimedia.org/wikipedia/commons/1/18/Eudynamys_scolopaceus_-_Asian_Koel_XC476378.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "creator": "Manoj Karingamadathil",
+      "license": "CC BY-SA 4.0",
+      "attribution": ":bird-seen:yes\nplayback-used:no\nCommon name: Asian Koel\nType: call\nGenus: Eudynamys\nSpecies: scolopaceus\nLocation: Ezhimala, Kannur, Kerala\nCountry: India\nElevation: 80 m",
+      "downloaded_at": "2026-10-11",
+      "checksum_sha256": "59197c7697b5591e2c0f501c3464be9a9929c2f41afa9d5d9d4c31c0d0e824f3",
+      "label_independently_verified": false,
+      "audio_checks": {
+        "duration_seconds": 113.85,
+        "sample_rate": 48000,
+        "channels": 1,
+        "format": "MP3",
+        "subtype": "MPEG_LAYER_III",
+        "rms": 0.047663
+      },
+      "already_on_disk": false,
+      "notes": "Metadata-based smoke test input only; uploader label not independently verified."
+    }
+  ]
+}
