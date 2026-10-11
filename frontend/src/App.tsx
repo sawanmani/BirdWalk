@@ -19,6 +19,7 @@ import {
   analyzeAudio,
   analyzeSampleFile,
   ApiError,
+  backendRunsOnThisMachine,
   fetchMission,
   fetchSamples,
 } from './lib/api.ts'
@@ -42,6 +43,32 @@ import {
 import { useBackendStatus } from './hooks/useBackendStatus.ts'
 import { useRouter } from './lib/router.ts'
 import type { AnalyzeResponse, Mission, MissionResponse, SampleEntry } from './lib/types.ts'
+
+// What to tell a user when a request dies before the backend can answer. In
+// local development that means their own service; on the deployed site the
+// backend is a free hosted demo server that sleeps when nobody is using it.
+const LOCAL_SERVICE_DOWN_MESSAGE = backendRunsOnThisMachine()
+  ? 'Could not reach the local service. Check that the backend is running, then try again.'
+  : 'Could not reach the demo server. It is free hosted hardware that sleeps when idle, so it may need a minute to wake up — try again shortly.'
+
+// What to do about a degraded backend differs completely between the two ways
+// of running this app: locally the reader can start services and install
+// packages, a visitor of the hosted demo cannot.
+const BACKEND_STATE_HINT = backendRunsOnThisMachine()
+  ? {
+      offline: 'The local backend is unreachable. Start it with uvicorn (see README), then dismiss to recheck.',
+      online_package_missing:
+        'The backend is running but the BirdNET-Analyzer package is not installed there. Run pip install -r backend/requirements.txt, then dismiss to recheck.',
+      online_assets_missing:
+        'Backend is up and the BirdNET package is installed, but the model weights/labels are not on disk yet. Analysis will honestly report "model not ready" until they are.',
+    }
+  : {
+      offline: 'The demo server is unreachable. It is free hosted hardware that sleeps when idle, so it can take a minute to wake — dismiss to recheck shortly.',
+      online_package_missing:
+        'The demo server is up but its BirdNET package did not load. That is a fault in this deployment; try again shortly, or run BirdWalk from the repository.',
+      online_assets_missing:
+        'The demo server is up but has not finished fetching its model weights, which happens on every cold start. Analysis will honestly report "model not ready" until that is done.',
+    }
 
 // `step` now models ONLY the core identification wizard. The menu destinations
 // (Collection / Leaderboard / Journal / About) are real routes, so browser
@@ -75,6 +102,17 @@ export default function App() {
       .then((r) => setSamples(r.samples))
       .catch(() => setSamples([]))
   }, [backendState])
+
+  // The header is sticky, so a panel opened while the page is scrolled can land
+  // with its first control underneath the header — the click then silently hits
+  // the header instead of the button (observed in the deployed build). Every
+  // step therefore starts just below it; `scroll-mt-28` is what keeps the
+  // header clear of the panel's own top edge.
+  const mainRef = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    mainRef.current?.scrollIntoView({ block: 'start', behavior: reduce ? 'instant' : 'smooth' })
+  }, [step])
 
   const go = (next: Step) => setStep(next)
 
@@ -136,7 +174,7 @@ export default function App() {
       setError(
         err instanceof ApiError
           ? err.message
-          : 'Could not reach the local service. Check that the backend is running, then try again.',
+          : LOCAL_SERVICE_DOWN_MESSAGE,
       )
       setStep('start')
     } finally {
@@ -236,7 +274,7 @@ export default function App() {
         navDisabled={step === 'mission' || step === 'phone_away'}
       />
 
-      <main className="flex-1">
+      <main ref={mainRef} className="flex-1 scroll-mt-28">
         {route !== '/' ? (
           route === '/collection' ? (
             <CollectionPanel onClose={() => navigate('/')} onChanged={() => undefined} />
@@ -256,10 +294,10 @@ export default function App() {
             <div className="mx-auto mt-4 w-full max-w-xl px-4 sm:px-6">
               <StatusBanner tone="warn" dismissible onDismiss={recheck}>
                 {backendState === 'offline'
-                  ? 'The local backend is unreachable. Start it with uvicorn (see README), then dismiss to recheck.'
+                  ? BACKEND_STATE_HINT.offline
                   : backendState === 'online_package_missing'
-                    ? 'The backend is running but the BirdNET-Analyzer package is not installed there. Run pip install -r backend/requirements.txt, then dismiss to recheck.'
-                    : 'Backend is up and the BirdNET package is installed, but the model weights/labels are not on disk yet. Analysis will honestly report "model not ready" until they are.'}
+                    ? BACKEND_STATE_HINT.online_package_missing
+                    : BACKEND_STATE_HINT.online_assets_missing}
               </StatusBanner>
             </div>
           )}

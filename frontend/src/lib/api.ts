@@ -15,6 +15,28 @@ import type {
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/+$/, '')
 const api = (path: string) => `${API_BASE}${path}`
 
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]'])
+const isLocalHost = (href: string) => {
+  try {
+    return LOCAL_HOSTS.has(new URL(href, 'http://localhost').hostname.replace(/^\[|\]$/g, ''))
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Whether the backend this page talks to lives on the visitor's own machine.
+ *
+ * Only true in local development, where the page is served from localhost and
+ * the API base is either same-origin (Vite's /api proxy) or another localhost
+ * port. The deployed site sends audio to a hosted backend, so any copy about
+ * "your own machine" has to branch on this instead of asserting it.
+ */
+export function backendRunsOnThisMachine(): boolean {
+  if (typeof window === 'undefined') return true
+  return isLocalHost(window.location.href) && (API_BASE === '' || isLocalHost(API_BASE))
+}
+
 async function request<T>(
   path: string,
   init?: RequestInit,

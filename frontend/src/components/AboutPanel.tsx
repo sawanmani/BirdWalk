@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { ShieldCheck, Cpu, Leaf, Search } from 'lucide-react'
 import { Button, Kicker, StatusBanner } from './ui.tsx'
-import { fetchIndiaSpecies, fetchModelInfo } from '../lib/api.ts'
+import { backendRunsOnThisMachine, fetchIndiaSpecies, fetchModelInfo } from '../lib/api.ts'
 import type { IndiaSpeciesResponse, ModelInfo, SampleEntry } from '../lib/types.ts'
+
+// The deployed build runs the model on a hosted demo Space, so the two
+// local-first claims have to change; everything else here is mode-independent.
+const LOCAL = backendRunsOnThisMachine()
 
 export function AboutPanel({
   samples,
@@ -27,7 +31,7 @@ export function AboutPanel({
     >
       <div className="flex items-end justify-between gap-4">
         <div>
-          <Kicker>Why local &amp; open</Kicker>
+          <Kicker>{LOCAL ? 'Why local & open' : 'Why open & honest'}</Kicker>
           <h2 className="mt-2 text-forest">
             Open innovation, in plain terms
           </h2>
@@ -40,13 +44,21 @@ export function AboutPanel({
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <InfoCard
           icon={<Cpu size={18} aria-hidden />}
-          title="Runs on your machine"
-          body="Inference uses a pretrained model on the backend host. No recording is sent to a closed cloud AI API."
+          title={LOCAL ? 'Runs on your machine' : 'Runs on a demo server'}
+          body={
+            LOCAL
+              ? 'Inference uses a pretrained model on the backend host. No recording is sent to a closed cloud AI API.'
+              : 'Inference uses the open pretrained BirdNET model on this project’s own demo server. No recording is sent to a closed cloud AI API.'
+          }
         />
         <InfoCard
           icon={<ShieldCheck size={18} aria-hidden />}
-          title="Your audio stays local"
-          body="Uploads are processed in temporary files and deleted. No account, no database, no GPS in this MVP."
+          title={LOCAL ? 'Your audio stays local' : 'Audio crosses the network'}
+          body={
+            LOCAL
+              ? 'Uploads are processed in temporary files and deleted. No account, no database, no GPS in this MVP.'
+              : 'Uploads reach the demo server over the network, are analysed in a temporary file and deleted. No account, no database, no GPS in this MVP.'
+          }
         />
         <InfoCard
           icon={<Leaf size={18} aria-hidden />}
@@ -78,8 +90,8 @@ export function AboutPanel({
             v={model ? String(model.label_count) : '—'}
           />
           <Field
-            k="Runs locally after setup"
-            v={model ? String(model.runs_locally_after_setup) : '—'}
+            k={LOCAL ? 'Runs locally after setup' : 'Runs on the demo server'}
+            v={model ? (LOCAL ? String(model.runs_locally_after_setup) : 'yes — no cloud AI API') : '—'}
           />
           <Field
             k="Airplane-mode tested"
@@ -95,11 +107,18 @@ export function AboutPanel({
         </p>
         <p className="mt-3 text-xs text-muted">
           {model?.offline_scope_note ??
-            `"Offline" here is scoped: after the model and app assets are
-            downloaded, inference and the mission flow run on this machine
-            with no per-request network calls. A full airplane-mode
-            (disconnected) end-to-end test has NOT been performed, and
-            phone-native inference is not claimed.`}
+            (LOCAL
+              ? `"Offline" here is scoped: after the model and app assets are
+                downloaded, inference and the mission flow run on this machine
+                with no per-request network calls. A full airplane-mode
+                (disconnected) end-to-end test has NOT been performed, and
+                phone-native inference is not claimed.`
+              : `This is the hosted demo: inference runs on the project's own
+                demo server, with no call to a closed cloud inference API — but
+                your recording or upload crosses the network to get there. This
+                endpoint is not offline and does not run on your machine. A
+                full airplane-mode (disconnected) end-to-end test has NOT been
+                performed, and phone-native inference is not claimed.`)}
         </p>
       </div>
 
@@ -109,7 +128,9 @@ export function AboutPanel({
         </h3>
         {samples.length === 0 ? (
           <p className="mt-2 text-sm text-muted">
-            No sample recordings have been downloaded yet.
+            {LOCAL
+              ? 'No sample recordings have been downloaded yet.'
+              : 'No sample recordings are available from the demo server right now.'}
           </p>
         ) : (
           <ul className="mt-3 flex flex-col gap-3">

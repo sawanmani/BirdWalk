@@ -11,6 +11,10 @@ backend/.venv/
 data/samples/*
 !data/samples/manifest.json
 !data/samples/README.md
+# The Hugging Face Space copy has to serve the clips (a visitor installs
+# nothing), but they still do not belong in this repository's history.
+hf-space/samples/*
+!hf-space/samples/manifest.json
 data/_dbg/
 data/*.txt
 # evidence transcript referenced by MODEL_CARD/TEST_REPORT

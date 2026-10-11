@@ -1,0 +1,10 @@
+BirdNET-Analyzer==2.4.0
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+soundfile>=0.12
+# Never pin gradio here. The HF Gradio SDK install layer itself runs
+# `pip install -r requirements.txt gradio[oauth,mcp]==6.30.0 torch<=2.13.0
+# uvicorn websockets spaces`, so a `gradio<6.0` constraint makes the whole
+# build unresolvable (ResolutionImpossible -> BUILD_ERROR). app.py is written
+# against the Gradio 6 API that HF gives us for free.

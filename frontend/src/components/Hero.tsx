@@ -2,8 +2,20 @@ import { Bird, Footprints } from 'lucide-react'
 import { motion, type Variants } from 'framer-motion'
 import { Button, Kicker } from './ui.tsx'
 import { useReducedMotion } from '../hooks/useReducedMotion.ts'
+import { backendRunsOnThisMachine } from '../lib/api.ts'
 
 const HEADLINE = 'Hear the birds. Find your way back to the world.'
+
+// Where the model actually runs. Local development keeps the local-first
+// wording; the deployed site must not claim the visitor's machine is doing the
+// work, because there the audio is sent to a hosted demo backend.
+const LOCAL = backendRunsOnThisMachine()
+const KICKER = LOCAL
+  ? 'A local-first bird sound companion'
+  : 'A bird sound companion, no install'
+const BLURB = LOCAL
+  ? 'Record three seconds of what you hear. BirdWalk matches it against a pretrained bird-sound model running on your own machine — then hands you one short mission and asks the only thing it cares about: that your screen goes quiet.'
+  : 'Record three seconds of what you hear. BirdWalk matches it against a pretrained bird-sound model on a free demo server — then hands you one short mission and asks the only thing it cares about: that your screen goes quiet.'
 
 const container: Variants = {
   hidden: {},
@@ -122,7 +134,7 @@ export function Hero({
             animate={reduced ? undefined : 'show'}
           >
             <div className="flex items-center">
-              <Kicker>A local-first bird sound companion</Kicker>
+              <Kicker>{KICKER}</Kicker>
               <ListeningBars live={!reduced} />
             </div>
 
@@ -148,10 +160,7 @@ export function Hero({
             transition={{ delay: reduced ? 0 : 0.55 }}
             className="mt-5 text-lg leading-relaxed text-muted"
           >
-            Record three seconds of what you hear. BirdWalk matches it against a
-            pretrained bird-sound model running on your own machine — then hands
-            you one short mission and asks the only thing it cares about: that
-            your screen goes quiet.
+            {BLURB}
           </motion.p>
 
           <motion.div

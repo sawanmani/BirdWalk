@@ -10,10 +10,14 @@ import {
 import { Button, StatusBanner } from './ui.tsx'
 import { useRecorder } from '../hooks/useRecorder.ts'
 import { useReducedMotion } from '../hooks/useReducedMotion.ts'
+import { backendRunsOnThisMachine } from '../lib/api.ts'
 import type { SampleEntry } from '../lib/types.ts'
 import { cn } from '../lib/cn.ts'
 
 const MAX_UPLOAD_BYTES = 25 * 1024 * 1024 // matches the backend limit
+
+// Where the analysis happens decides what we may promise about the audio path.
+const LOCAL = backendRunsOnThisMachine()
 
 export interface Submission {
   blob: Blob
@@ -120,9 +124,9 @@ export function RecordingPanel({
       {modelDisabled && (
         <div className="mb-6">
           <StatusBanner tone="warn">
-            The local model is not ready yet, so analysis will honestly
-            report that instead of guessing. Recording and upload still
-            work.
+            {LOCAL
+              ? 'The local model is not ready yet, so analysis will honestly report that instead of guessing. Recording and upload still work.'
+              : 'The demo model is not ready yet — the server fetches its weights on each cold start — so analysis will honestly report that instead of guessing. Recording and upload still work.'}
           </StatusBanner>
         </div>
       )}
@@ -147,9 +151,9 @@ export function RecordingPanel({
           {recorder.state === 'idle' || recorder.state === 'error' ? (
             <>
               <p className="text-sm text-muted">
-                Your microphone is used only for this recording. Audio is
-                sent to the local service on your own machine for
-                analysis and is not stored.
+                {LOCAL
+                  ? 'Your microphone is used only for this recording. Audio is sent to the local service on your own machine for analysis and is not stored.'
+                  : 'Your microphone is used only for this recording. Audio is sent to the demo server for analysis, held in a temporary file and not stored.'}
               </p>
               <Button onClick={() => void recorder.start()} disabled={modelDisabled}>
                 <Mic size={18} aria-hidden /> Start recording
@@ -238,16 +242,22 @@ export function RecordingPanel({
         <div className="card-field px-6 py-8">
           <h2 className="text-forest">Try a recorded sample</h2>
           <p className="mt-2 text-sm text-muted">
-            Licensed clips fetched by the sample script. These verify the
-            pipeline — they are smoke tests, not field tests.
+            Licensed clips {LOCAL ? 'fetched by the sample script' : 'served by the demo server'}. These
+            verify the pipeline — they are smoke tests, not field tests.
           </p>
           {samples.length === 0 ? (
             <p className="mt-6 rounded-xl bg-sage/60 p-4 text-sm text-muted">
-              No samples on disk yet. Run{' '}
-              <code className="font-mono text-ink">
-                python scripts/download_samples.py
-              </code>{' '}
-              (network required once), then refresh.
+              {LOCAL ? (
+                <>
+                  No samples on disk yet. Run{' '}
+                  <code className="font-mono text-ink">
+                    python scripts/download_samples.py
+                  </code>{' '}
+                  (network required once), then refresh.
+                </>
+              ) : (
+                'The demo server has no sample clips available right now. Record or upload a file instead.'
+              )}
             </p>
           ) : (
             <ul className="mt-6 flex flex-col gap-3">

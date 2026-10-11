@@ -1,4 +1,5 @@
 import { Leaf } from 'lucide-react'
+import { backendRunsOnThisMachine } from '../lib/api.ts'
 import type { BackendState } from '../lib/types'
 import { cn } from '../lib/cn.ts'
 import type { Route } from '../lib/router.ts'
@@ -9,14 +10,26 @@ import {
   LeaderboardIcon,
 } from './NavIcons.tsx'
 
-const STATE_LABEL: Record<BackendState, string> = {
-  checking: 'Checking local service…',
-  online_model_ready: 'Local model ready',
+// "Local" is only true of a development run on the visitor's own machine; the
+// deployed site talks to a hosted backend, so its labels drop the word.
+const HOSTED_LABEL: Record<BackendState, string> = {
+  checking: 'Checking service…',
+  online_model_ready: 'Model ready',
   online_assets_missing: 'Service up — model weights not downloaded',
   online_package_missing: 'Service up — BirdNET not installed',
-  offline: 'Local service unreachable',
-  error: 'Local service error',
+  offline: 'Service unreachable',
+  error: 'Service error',
 }
+
+const STATE_LABEL: Record<BackendState, string> = backendRunsOnThisMachine()
+  ? {
+      ...HOSTED_LABEL,
+      checking: 'Checking local service…',
+      online_model_ready: 'Local model ready',
+      offline: 'Local service unreachable',
+      error: 'Local service error',
+    }
+  : HOSTED_LABEL
 
 type Tab = {
   route: Route
